@@ -149,7 +149,7 @@ def printData():
                 if (int(gameViewersLooped[h]) / loops) < minViewers:
                     gameViewersLooped[h] = "0"
                 gameStreamsLooped[h] = str(int(gameStreamsLooped[h]) + int(gameStreams[i]))
-                if (int(gameStreamsLooped[h]) / loops) < minStreams:
+                if (math.trunc(int(gameStreamsLooped[h])) / loops) < minStreams:
                     gameStreamsLooped[h] = "0"
                 if gameViewersLooped[h] == "0":
                     gameViewerRatioLooped[h] = 0
@@ -171,7 +171,7 @@ def printData():
             if (int(gameViewersLooped[-1]) / loops) < minViewers:
                 gameViewersLooped[-1] = "0"
             gameStreamsLooped.append(gameStreams[i])
-            if (int(gameStreamsLooped[-1]) / loops) < minStreams:
+            if (math.trunc(int(gameStreamsLooped[-1])) / loops) < minStreams:
                 gameStreamsLooped[-1] = "0"
             if gameViewersLooped[-1] == "0":
                 gameViewerRatioLooped.append(0)
@@ -367,11 +367,11 @@ while True:
                 if testing:
                     if topGameNames[i] == 'Minecraft':
                         print("Info for Minecraft has been gotten")
-                if int(gameStreams[i]) < minStreams:
+                if math.trunc(int(gameStreams[i])) < minStreams:
                     gameViewersMedian.append(0)
                 else:
                     casterPercentile = (len(medianList[i]) - (math.trunc(len(medianList[i]) * (casterPercentage / 100))))
-                    if len(medianList[i]) < minStreams:
+                    if math.trunc(len(medianList[i])) < minStreams:
                         median = 0
                     else:
                         median = medianList[i][casterPercentile]
@@ -434,7 +434,7 @@ while True:
     for i in range(len(topGameIds)):
             if int(gameViewers[i]) < minViewers:
                 gameViewers[i] = "0"
-            if int(gameStreams[i]) < minStreams:
+            if math.trunc(int(gameStreams[i])) < minStreams:
                 gameStreams[i] = "0"
 
     # Calculate viewer ratio

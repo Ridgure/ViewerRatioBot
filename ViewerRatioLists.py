@@ -49,7 +49,7 @@ blacklist = [
     ["KovaaK's Aim Trainer", '510911'], ['Metal Gear Survive', '498026'], ['Counter-Strike', '10710'],
     ['Uncharted: The Lost Legacy', '494558'], ['World War Z: Aftermath', '1280358639'], ['Borderlands 2', '32345'],
     ['Days Gone', '497456'], ['ULTRAKILL', '514166'], ['Quake II', '2955'], ["Uncharted 4: A Thief's End", '458641'],
-    ['Call of Duty 2', '2162'],
+    ['Call of Duty 2', '2162'], ['Saints Row 2', '18906'],
     # Bossfights
     ['bloodborne', '460636'], ['dark souls', '29433'], ['dark souls iii', '490292'], ['dark souls ii', '91423'],
     ['Elden Ring', '512953'], ["demon's souls", '21812'], ['hellpoint', '496421'], ['left 4 dead 2', '24193'],
@@ -237,7 +237,7 @@ favoriteGames = [
     'Going medieval', 'Civilization iv', 'Hearts of Iron IV', 'Mount & Blade: Warband', 'Mount & Blade II: Bannerlord',
     'Teamfight Tactics', 'Auto Chess'
     # Weird
-    'Reading Fun', 'Roblox',
+    'Reading Fun', 'Roblox', 'Duolingo',
     # Board games
     'Chess', 'Tabletop Simulator', 'Card Games', 'Board Games',
     # Card games
@@ -250,7 +250,7 @@ favoriteGames = [
     'Golf with your friends', "Tony Hawk's Pro Skater 1+2",
     # Story
     "Assassin's Creed Odyssey", "Assassin's Creed Origins", "Assassin's Creed IV Black Flag",
-    "Assassin's Creed Valhalla", "Assassin's Creed Unity",
+    "Assassin's Creed Valhalla", "Assassin's Creed Unity", "Assassin's Creed II",
     # Games for 2
     'Overcooked! 2',
     # Platformer
