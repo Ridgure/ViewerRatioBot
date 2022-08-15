@@ -15,7 +15,7 @@ blacklist = [
     ['call of duty: warzone', '512710'], ['call of duty: wwii', '496712'],
     ['counter-strike: global offensive', '32399'], ['battlebit', '496916'], ['cruelty squad', '977894696'],
     ['destiny 2', '497057'], ['doom eternal', '506442'], ['escape from tarkov', '491931'], ['deathloop', '512983'],
-    ['fallout 76', '506246'], ['f.e.a.r. perseus mandate', '14310'], ['gears 5', '506407'],
+    ['fallout 76', '506246'], ['f.e.a.r. perseus mandate', '14310'], ['gears 5', '506407'], ['Fallout 4', '489776'],
     ['grand theft auto iv: the ballad of gay tony', '2113221108'], ['grand theft auto v', '32982'], ['gtfo', '500627'],
     ['gunfire reborn', '517645'], ['gunz: the duel', '513567'], ['hitman', '491471'], ['hitman 3', '518011'],
     ['hell let loose', '497440'], ['hunt: showdown', '500188'], ['hyper scape', '518306'],
@@ -48,7 +48,8 @@ blacklist = [
     ["Tom Clancy's Rainbow Six Extraction", '513004'], ['Deadpool', '509509'], ['Half-Life 2', '1420'],
     ["KovaaK's Aim Trainer", '510911'], ['Metal Gear Survive', '498026'], ['Counter-Strike', '10710'],
     ['Uncharted: The Lost Legacy', '494558'], ['World War Z: Aftermath', '1280358639'], ['Borderlands 2', '32345'],
-    ['Days Gone', '497456'], ['ULTRAKILL', '514166'],
+    ['Days Gone', '497456'], ['ULTRAKILL', '514166'], ['Quake II', '2955'], ["Uncharted 4: A Thief's End", '458641'],
+    ['Call of Duty 2', '2162'],
     # Bossfights
     ['bloodborne', '460636'], ['dark souls', '29433'], ['dark souls iii', '490292'], ['dark souls ii', '91423'],
     ['Elden Ring', '512953'], ["demon's souls", '21812'], ['hellpoint', '496421'], ['left 4 dead 2', '24193'],
@@ -90,6 +91,7 @@ blacklist = [
     ['The Evil Within', '68000'], ['The Evil Within 2', '497437'], ['Escape the Backrooms', '2066107586'],
     ['Resident Evil Resistance', '514308'], ['Song of Horror', '514930'], ['Darkwood', '313146'],
     ['Fear Therapy', '819777302'], ['Silent Hill', '3947'], ['Lunch Lady', '477532253'], ['Pacify', '511134'],
+    ['Resident Evil: Revelations', '28576'],
     # Murder mystery
     ['gone home', '65752'], ["Handy Harry's Haunted House Services", '1450669133'],
     # Underwater
@@ -183,6 +185,7 @@ blacklist = [
     # Minigames with or without chat
     ['Kukoro: Stream Chat Games', '518764'], ['Words On Stream', '512821'], ['Jackbox Party Packs', '493174'],
     ['Kahoot!', '1127100998'], ['Wordle', '879648744'], ['What The Dub?!', '752874500'],
+    ['The Jackbox Party Pack 9', '1219652274'],
     # Competitive
     ['dota 2', '29595'], ['smite', '32507'], ['overwatch', '488552'], ['Smite', '32507'], ['starcraft ii', '490422'],
     ['StarCraft', '11989'], ['Warcraft III', '12924'], ['valorant', '516575'], ['Age of Empires II', '13389'],

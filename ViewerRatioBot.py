@@ -257,6 +257,8 @@ while True:
 
         print("Getting streamed games")
         getMoreGames()
+        if testing:
+            print("Streamed games have been gotten")
         # Print new blacklist additions
         if not newBlacklistAdditions == []:
             for i in range(len(newBlacklistAdditions)):
@@ -283,7 +285,8 @@ while True:
         topGameNames = topGameNamesTemp
 
         if testing:
-            print(topGameIds)
+            print("The top game names are: " + str(topGameNames))
+            print("The top game ids are: " + str(topGameIds))
         try:
             for i in range(len(topGameIds)):
                 if testing:
@@ -315,6 +318,9 @@ while True:
                                     dropsGames.append(e['game_id'])
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
+                if testing:
+                    if topGameNames[i] == 'Minecraft':
+                        print("Info for Minecraft has been gotten")
                 if int(gameStreams[i]) < 3:
                     gameViewersMedian.append(0)
                 else:
