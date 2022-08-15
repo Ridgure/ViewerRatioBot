@@ -20,6 +20,7 @@ global hostGamesLooped
 global gameViewersMedianLooped
 global viewerRatioMedianRatioLooped
 global topGameIds
+global topGameIdsLooped
 global topGameNames
 global stopGettingGames
 global dropsGames
@@ -28,6 +29,7 @@ global worthGames
 global gameViewersMedian
 global minStreams
 global minViewers
+global loopStart
 
 # Globals permanent through while true loops
 gameViewersLooped = []
@@ -36,10 +38,13 @@ gameViewerRatioLooped = []
 hostGamesLooped = []
 gameViewersMedianLooped = []
 viewerRatioMedianRatioLooped = []
+topGameIdsLooped = []
 loops = 0
 worthGames = 0
 dropsGames = []
 firstRun = True
+
+# Debug variable
 testing = False
 
 def getMoreGameViewers():
@@ -152,7 +157,13 @@ def printData():
                     gameViewerRatioLooped[h] = 0
                 else:
                     gameViewerRatioLooped[h] = int(gameViewersLooped[h]) / int(gameStreamsLooped[h])
+                if testing:
+                    if topGameNames[i] == 'Minecraft' and hostGamesLooped[h] == 'Minecraft':
+                        print("Medians are: ", gameViewersMedianLooped[h], gameViewersMedian[h])
                 gameViewersMedianLooped[h] = int(gameViewersMedianLooped[h]) + int(gameViewersMedian[i])
+                if testing:
+                    if topGameNames[i] == 'Minecraft' and hostGamesLooped[h] == 'Minecraft':
+                        print("Ratio consists of: ", gameViewerRatioLooped[h], gameViewersMedianLooped[h])
                 viewerRatioMedianRatioLooped[h] = gameViewerRatioLooped[h] * gameViewersMedianLooped[h]
                 existingGame = True
         if not existingGame:
@@ -197,7 +208,6 @@ def printStrings():
     global hostGamesLooped
     global gameViewersMedianLooped
     global viewerRatioMedianRatioLooped
-    global viewAmount
     global hostGamesLoopedPrinted
     global gameViewersLoopedPrinted
     global gameStreamsLoopedPrinted
@@ -205,6 +215,7 @@ def printStrings():
     global gameViewersMedianLoopedPrinted
     global viewerRatioMedianRatioLoopedPrinted
     global viewerRatioMedianRatioLoopedSorted
+    viewAmount = len(hostGamesLooped)
     for i in range(viewAmount):
         if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
             gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
@@ -249,6 +260,14 @@ def printStrings():
                 )
     print(str(worthGames) + ' games worth streaming')
 
+
+def convert_timedelta(duration):
+    days, seconds = duration.days, duration.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = (seconds % 60)
+    return hours, minutes, seconds
+
 # Print new blacklist additions
 if not newBlacklistAdditions == []:
     if testing:
@@ -278,6 +297,8 @@ while True:
         paginationTopGames = ""
 
         print("Getting streamed games")
+        if loops == 0:
+            loopStart = datetime.datetime.now()
         getMoreGames()
         if testing:
             print("Streamed games have been gotten")
@@ -287,7 +308,7 @@ while True:
         for i in range(len(blacklist)):
             blacklistIds.append(blacklist[i][1])
 
-        # remove blacklisted games
+        # Remove blacklisted games
         topGameIdsTemp = []
         topGameNamesTemp = []
         for i in range(len(topGameIds)):
@@ -296,6 +317,16 @@ while True:
                 topGameNamesTemp.append(topGameNames[i])
         topGameIds = topGameIdsTemp
         topGameNames = topGameNamesTemp
+
+        # Add games that were not included
+        if loops > 0:
+            if testing:
+                print("The top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
+                print("The top game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
+            for i in range(len(topGameIdsLooped)):
+                if not topGameIdsLooped[i] in topGameIds:
+                    topGameIds.append(topGameIdsLooped[i])
+                    topGameNames.append(hostGamesLooped[i])
 
         if testing:
             print("The top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
@@ -389,6 +420,7 @@ while True:
     topGameNames = topGameNamesTemp
     gameViewers = gameViewersTemp
     gameStreams = gameStreamsTemp
+    topGameIdsLooped = topGameIds[:]
 
     if testing:
         print("After drop removal")
@@ -427,6 +459,7 @@ while True:
     loopAmount = 3
     loops = loops + 1
     worthGames = 0
+    now = datetime.datetime.now()
     if loops == 1:
 
         # Transfer variables to other variables for use in next loop
@@ -496,17 +529,15 @@ while True:
                             str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
                         )
             print(str(worthGames) + ' games worth streaming')
-        print("Data from the last loop")
     elif 0 < loops < loopAmount:
         printData()
         if firstRun:
             printStrings()
-        print("Data from the last " + str(loops) + " loops")
     elif loops == loopAmount:
         printData()
         printStrings()
-        print("Data from the last " + str(loops) + " loops")
         firstRun = False
         loops = 0
-    now = datetime.datetime.now()
+    hours, minutes, seconds = convert_timedelta(now - loopStart)
+    print('Data from the last {} minute{}, {} seconds{}'.format(minutes, 's' if seconds != 1 else '',seconds, 's' if seconds != 1 else ''))
     print("Current time: " + str(now.strftime('%H:%M:%S')))

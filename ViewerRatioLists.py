@@ -91,7 +91,7 @@ blacklist = [
     ['The Evil Within', '68000'], ['The Evil Within 2', '497437'], ['Escape the Backrooms', '2066107586'],
     ['Resident Evil Resistance', '514308'], ['Song of Horror', '514930'], ['Darkwood', '313146'],
     ['Fear Therapy', '819777302'], ['Silent Hill', '3947'], ['Lunch Lady', '477532253'], ['Pacify', '511134'],
-    ['Resident Evil: Revelations', '28576'],
+    ['Resident Evil: Revelations', '28576'], ['Standoff 2', '513501'],
     # Murder mystery
     ['gone home', '65752'], ["Handy Harry's Haunted House Services", '1450669133'],
     # Underwater
@@ -171,11 +171,14 @@ blacklist = [
     ['F1 22', '1705795372'], ['CarX Drift Racing Online', '498289'], ['Need for Speed: Underground', '11258'],
     ['Forza Horizon 5', '1757732267'], ['Stuntfest Worldtour', '1582771097'], ['The Crew 2', '497118'],
     ['NASCAR Heat 5', '517409'], ['Need for Speed Heat', '512782'],
+    # Speedrun
+    ['Hot Lava', '498346'],
     # Battle Royale
     ['fortnite', '33214'], ['fall guys', '512980'], ['Garena Free Fire', '502732'], ['Naraka: Bladepoint', '515474'],
     ['pubg: battlegrounds', '493057'], ["playerunknown's battlegrounds", '493057'], ['Super Animal Royale', '509529'],
     ['super people', '19620578'], ['warzone', '25416'], ['Stumble Guys', '1312214340'], ['Crab Game', '673760473'],
-    ['Realm Royale', '505845'], ['Rush Royale', '633454324'],
+    ['Realm Royale', '505845'], ['Rush Royale', '633454324'], ['Rumbleverse', '161880494'],
+    ['Z1: Battle Royale', '417892'],
     # Old
     ['Ape Escape', '12270'],  ['Retro', '27284'],
     # War
@@ -214,7 +217,7 @@ blacklist = [
     ['Mario Kart Wii', '18871']
 ]
 
-newBlacklistAdditions = ['Hot Lava', 'Standoff 2', 'Rumbleverse']
+newBlacklistAdditions = ['Saints Row 2']
 
 favoriteGames = [
     # Games I enjoy the most at the moment
