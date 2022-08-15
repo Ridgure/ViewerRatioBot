@@ -136,7 +136,7 @@ blacklist = [
     ['Artifact', '16937'], ['El Chavo', '34054'], ['Movie Night', '753325070'], ['Music', '26936'],
     ['Anime World', '637756067'], ['Always On', '499973'], ['Sexy Miss', '1129360291'], ['The Simpsons', '2046821115'],
     ['Series Makers', '700055046'], ['Radio Station', '2128929587'], ['Karaoke Party', '488782'],
-    ['Relaxing Waves', '872742502'],
+    ['Relaxing Waves', '872742502'], ['South Park', '8105'],
     # Space
     ['elite: dangerous', '80607'], ['kerbal space program', '32742'], ['Starsector', '33416'],
     ['FTL: Faster Than Light', '33882'], ['Star Trek Fleet Command', '510530'],
@@ -191,7 +191,7 @@ blacklist = [
     ['StarCraft', '11989'], ['Warcraft III', '12924'], ['valorant', '516575'], ['Age of Empires II', '13389'],
     ['Total War: Warhammer III', '1913410799'], ['Heroes of Might and Magic III: The Restoration of Erathia', '12839'],
     ['Age of Empires III', '7830'], ['Age of Empires IV', '498482'], ['Total War: Warhammer II', '497434'],
-    ['Warhammer Online: Age of Reckoning', '18888'],
+    ['Warhammer Online: Age of Reckoning', '18888'], ['World of Warcraft', '18122'],
     # Games for 2
     ['We Were Here Forever', '428452832'], ['Codenames', '508509'], ['Keep Talking and Nobody Explodes', '461492'],
     ['Gartic Phone', '278888515'], ['It Takes Two', '518213'], ['Tabletop RPGs', '509664'], ['Pummel Party', '509549'],
@@ -213,7 +213,8 @@ blacklist = [
     # Nintendo WII
     ['Mario Kart Wii', '18871']
 ]
-newBlacklistAdditions = []
+
+newBlacklistAdditions = ['Hot Lava', 'Standoff 2', 'Rumbleverse']
 
 favoriteGames = [
     # Games I enjoy the most at the moment
@@ -233,7 +234,7 @@ favoriteGames = [
     'Going medieval', 'Civilization iv', 'Hearts of Iron IV', 'Mount & Blade: Warband', 'Mount & Blade II: Bannerlord',
     'Teamfight Tactics', 'Auto Chess'
     # Weird
-    'Reading Fun',
+    'Reading Fun', 'Roblox',
     # Board games
     'Chess', 'Tabletop Simulator', 'Card Games', 'Board Games',
     # Card games
@@ -243,7 +244,7 @@ favoriteGames = [
     # Special
     'Art', 'Makers & Crafting', 'Software and Game Development', 'Science & Technology',
     # Sports
-    'Golf with your friends',
+    'Golf with your friends', "Tony Hawk's Pro Skater 1+2",
     # Story
     "Assassin's Creed Odyssey", "Assassin's Creed Origins", "Assassin's Creed IV Black Flag",
     "Assassin's Creed Valhalla", "Assassin's Creed Unity",
