@@ -1,2 +1,8 @@
 # Project exclude paths
 /venv/
+.venv
+venv/
+.idea
+ViewerRatioConfig.py
+*.pyc
+UnwantedTwitch_Blacklist.json

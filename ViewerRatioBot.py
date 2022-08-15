@@ -38,6 +38,7 @@ loops = 0
 worthGames = 0
 dropsGames = []
 firstRun = True
+testing = False
 
 def getMoreGameViewers():
     global pagination
@@ -77,7 +78,7 @@ def getMoreGames():
     topGameViewers = 0
     if stopGettingGames < 3:
         getMoreGames()
-    else:
+    elif testing:
         print("raw streamed games are: " + str(len(topGameIds)) + " " + str(topGameNames))
 
 
@@ -120,13 +121,21 @@ def printData():
     global gameStreams
     global gameViewers
     global firstRun
+    global hostGamesLoopedPrinted
+    global gameViewersLoopedPrinted
+    global gameStreamsLoopedPrinted
+    global gameViewerRatioLoopedPrinted
+    global gameViewersMedianLoopedPrinted
+    global viewerRatioMedianRatioLoopedPrinted
+    global viewerRatioMedianRatioLoopedSorted
     for i in range(len(topGameIds)):
         existingGame = False
         for h in range(len(hostGamesLooped)):
-            if topGameNames[i] == 'Minecraft' and hostGamesLooped[h] == 'Minecraft':
-                print("Before adding")
-                print(gameViewers[i])
-                print(gameViewersLooped[h])
+            if testing:
+                if topGameNames[i] == 'Minecraft' and hostGamesLooped[h] == 'Minecraft':
+                    print("Before adding")
+                    print(gameViewers[i])
+                    print(gameViewersLooped[h])
             if topGameNames[i] == hostGamesLooped[h]:
                 gameViewersLooped[h] = str(int(gameViewersLooped[h]) + int(gameViewers[i]))
                 if (int(gameViewersLooped[h]) / loops) < 10:
@@ -144,7 +153,6 @@ def printData():
                 viewerRatioMedianRatioLooped[h] = gameViewerRatioLooped[h] * gameViewersMedianLooped[h]
                 existingGame = True
         if not existingGame:
-            print("New games are: " + topGameNames[i])
             gameViewersLooped.append(gameViewers[i])
             if (int(gameViewersLooped[-1]) / loops) < 10:
                 gameViewersLooped[-1] = "0"
@@ -171,11 +179,6 @@ def printData():
     viewerRatioMedianRatioLoopedPrinted = viewerRatioMedianRatioLooped[:]
     viewerRatioMedianRatioLoopedSorted = viewerRatioMedianRatioLooped[:]
 
-    print("Before sorting")
-    for i in range(len(hostGamesLoopedPrinted)):
-        if hostGamesLoopedPrinted[i] == 'Minecraft':
-            print(gameViewersLoopedPrinted[i])
-
     dummy[:], hostGamesLoopedPrinted[:] = zip(*sorted(zip(viewerRatioMedianRatioLoopedPrinted, hostGamesLoopedPrinted), key=lambda p: (p[0], p[1])))
     dummy[:], gameViewersLoopedPrinted[:] = zip(*sorted(zip(viewerRatioMedianRatioLoopedPrinted, gameViewersLoopedPrinted), key=lambda p: (p[0], p[1])))
     dummy[:], gameStreamsLoopedPrinted[:] = zip(*sorted(zip(viewerRatioMedianRatioLoopedPrinted, gameStreamsLoopedPrinted), key=lambda p: (p[0], p[1])))
@@ -183,49 +186,59 @@ def printData():
     dummy[:], gameViewersMedianLoopedPrinted[:] = zip(*sorted(zip(viewerRatioMedianRatioLoopedPrinted, gameViewersMedianLoopedPrinted), key=lambda p: (p[0], p[1])))
     viewerRatioMedianRatioLoopedSorted = sorted(viewerRatioMedianRatioLoopedSorted)
 
-    print("After sorting")
-    for i in range(len(hostGamesLoopedPrinted)):
-        if hostGamesLoopedPrinted[i] == 'Minecraft':
-            print(gameViewersLoopedPrinted[i])
-
-    if firstRun:
-        for i in range(viewAmount):
-            if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
+def printStrings():
+    global worthGames
+    global gameViewersLooped
+    global gameStreamsLooped
+    global gameViewerRatioLooped
+    global hostGamesLooped
+    global gameViewersMedianLooped
+    global viewerRatioMedianRatioLooped
+    global viewAmount
+    global hostGamesLoopedPrinted
+    global gameViewersLoopedPrinted
+    global gameStreamsLoopedPrinted
+    global gameViewerRatioLoopedPrinted
+    global gameViewersMedianLoopedPrinted
+    global viewerRatioMedianRatioLoopedPrinted
+    global viewerRatioMedianRatioLoopedSorted
+    for i in range(viewAmount):
+        if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
+            gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
+            gameStreamsLoopedAverage = int(gameStreamsLoopedPrinted[i - viewAmount]) / loops
+            gameViewerRatioLoopedAverage = gameViewerRatioLoopedPrinted[i - viewAmount]
+            gameViewersMedianLoopedAverage = gameViewersMedianLoopedPrinted[i - viewAmount] / loops
+            viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedSorted[i - viewAmount] / loops
+            if gameViewersMedianLoopedAverage > 0:
+                worthGames = worthGames + 1
+                printString = (str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
+                               str(round(int(gameViewersLoopedAverage))) + " viewers watching " +
+                               str(round(int(gameStreamsLoopedAverage))) + " streams with a viewer ratio of: " +
+                               str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
+                               str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
+                               str(round(viewerRatioMedianRatioLoopedAverage)))
+                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
+                    print('\033[1m' + printString + '\033[0m')
+                else:
+                    print(printString)
+    print("Favorite games:")
+    for i in range(viewAmount):
+        if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
+            if viewerRatioMedianRatioLoopedPrinted[i - viewAmount] > 0:
                 gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
                 gameStreamsLoopedAverage = int(gameStreamsLoopedPrinted[i - viewAmount]) / loops
                 gameViewerRatioLoopedAverage = gameViewerRatioLoopedPrinted[i - viewAmount]
                 gameViewersMedianLoopedAverage = gameViewersMedianLoopedPrinted[i - viewAmount] / loops
-                viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedSorted[i - viewAmount] / loops
-                if gameViewersMedianLoopedAverage > 0:
-                    worthGames = worthGames + 1
-                    printString = (str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
-                                   str(round(int(gameViewersLoopedAverage))) + " viewers watching " +
-                                   str(round(int(gameStreamsLoopedAverage))) + " streams with a viewer ratio of: " +
-                                   str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                                   str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
-                                   str(round(viewerRatioMedianRatioLoopedAverage)))
-                    if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
-                        print('\033[1m' + printString + '\033[0m')
-                    else:
-                        print(printString)
-        print("Favorite games:")
-        for i in range(viewAmount):
-            if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
-                if viewerRatioMedianRatioLoopedPrinted[i - viewAmount] > 0:
-                    gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
-                    gameStreamsLoopedAverage = int(gameStreamsLoopedPrinted[i - viewAmount]) / loops
-                    gameViewerRatioLoopedAverage = gameViewerRatioLoopedPrinted[i - viewAmount]
-                    gameViewersMedianLoopedAverage = gameViewersMedianLoopedPrinted[i - viewAmount] / loops
-                    viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedPrinted[i - viewAmount] / loops
-                    print(
-                        str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
-                        str(round(gameViewersLoopedAverage)) + " viewers watching " +
-                        str(round(gameStreamsLoopedAverage)) + " streams with a viewer ratio of: " +
-                        str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                        str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
-                        str(round(viewerRatioMedianRatioLoopedAverage))
-                    )
-        print(str(worthGames) + ' games worth streaming')
+                viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedPrinted[i - viewAmount] / loops
+                print(
+                    str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
+                    str(round(gameViewersLoopedAverage)) + " viewers watching " +
+                    str(round(gameStreamsLoopedAverage)) + " streams with a viewer ratio of: " +
+                    str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
+                    str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
+                    str(round(viewerRatioMedianRatioLoopedAverage))
+                )
+    print(str(worthGames) + ' games worth streaming')
     print("Data from the last " + str(loops) + " minutes")
 
 
@@ -244,7 +257,6 @@ while True:
 
         print("Getting streamed games")
         getMoreGames()
-        print("Streamed games have been gotten")
         # Print new blacklist additions
         if not newBlacklistAdditions == []:
             for i in range(len(newBlacklistAdditions)):
@@ -270,15 +282,13 @@ while True:
         topGameIds = topGameIdsTemp
         topGameNames = topGameNamesTemp
 
-        print("New top games", len(topGameNames), topGameNames)
-        print("New top Ids", len(topGameIds), topGameIds)
-
-        print('Getting info for streamed games')
-        print(topGameIds)
+        if testing:
+            print(topGameIds)
         try:
             for i in range(len(topGameIds)):
-                if topGameNames[i] == 'Minecraft':
-                    print("Getting info for Minecraft")
+                if testing:
+                    if topGameNames[i] == 'Minecraft':
+                        print("Getting info for Minecraft")
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&game_id=" + topGameIds[i]
                 params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
                 r = requests.get(url, headers=params).json()
@@ -305,8 +315,6 @@ while True:
                                     dropsGames.append(e['game_id'])
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
-                if topGameNames[i] == 'Minecraft':
-                    print("Info for Minecraft has been gotten")
                 if int(gameStreams[i]) < 3:
                     gameViewersMedian.append(0)
                 else:
@@ -326,8 +334,6 @@ while True:
                         print(str(i) + " of " + str(len(topGameIds)))
                     if (i + 1) == len(topGameIds):
                         print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
-            print("the new streamed games are: " + str(topGameNames))
-            print("the new game viewers are " + str(gameViewers))
         except Exception as e:
             print("Error in getting streamed games")
             print(e)
@@ -338,12 +344,14 @@ while True:
     except KeyboardInterrupt:
         print('Keyboard interrupt exception is caught')
 
-    print("Before drop removal")
-    print(len(topGameNames), topGameNames)
-    print(len(gameViewers), gameViewers)
-    for i in range(len(topGameIds)):
-        if topGameNames[i] == 'Minecraft':
-            print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+    if testing:
+        print("Before drop removal")
+        print(len(topGameNames), topGameNames)
+        print(len(gameViewers), gameViewers)
+        if testing:
+            for i in range(len(topGameIds)):
+                if topGameNames[i] == 'Minecraft':
+                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
 
     # remove games with drops
     topGameIdsTemp = []
@@ -361,12 +369,14 @@ while True:
     gameViewers = gameViewersTemp
     gameStreams = gameStreamsTemp
 
-    print("After drop removal")
-    print(len(topGameNames), topGameNames)
-    print(len(gameViewers), gameViewers)
-    for i in range(len(topGameIds)):
-        if topGameNames[i] == 'Minecraft':
-            print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+    if testing:
+        print("After drop removal")
+        print(len(topGameNames), topGameNames)
+        print(len(gameViewers), gameViewers)
+        if testing:
+            for i in range(len(topGameIds)):
+                if topGameNames[i] == 'Minecraft':
+                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
 
     for i in range(len(topGameIds)):
             if int(gameViewers[i]) < 10:
@@ -407,14 +417,16 @@ while True:
         viewerRatioMedianRatioLooped = viewerRatioMedianRatio[:]
         viewerRatioMedianRatioSorted = viewerRatioMedianRatio[:]
 
-        print("Before sorting")
-        for i in range(len(topGameIds)):
-            if topGameNames[i] == 'Minecraft':
-                print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+        if testing:
+            print("Before sorting")
+            for i in range(len(topGameIds)):
+                if topGameNames[i] == 'Minecraft':
+                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
 
-        print(topGameNames)
-        print(gameViewers)
-        print(gameStreams)
+        if testing:
+            print(topGameNames)
+            print(gameViewers)
+            print(gameStreams)
 
         # Sort by all lists by viewerRatioMedianRatio
         dummy = []
@@ -424,15 +436,17 @@ while True:
         dummy[:], gameViewerRatio[:] = zip(*sorted(zip(viewerRatioMedianRatio, gameViewerRatio), key=lambda p: (p[0], p[1])))
         dummy[:], gameViewersMedian[:] = zip(*sorted(zip(viewerRatioMedianRatio, gameViewersMedian), key=lambda p: (p[0], p[1])))
         viewerRatioMedianRatioSorted[:] = sorted(viewerRatioMedianRatioSorted)
-        print(topGameNames)
-        print(gameViewers)
-        print(gameStreams)
-        print(viewerRatioMedianRatio)
+        if testing:
+            print(topGameNames)
+            print(gameViewers)
+            print(gameStreams)
+            print(viewerRatioMedianRatio)
 
-        print("After sorting")
-        for i in range(len(topGameIds)):
-            if topGameNames[i] == 'Minecraft':
-                print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+        if testing:
+            print("After sorting")
+            for i in range(len(topGameIds)):
+                if topGameNames[i] == 'Minecraft':
+                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
 
         if firstRun:
             for i in range(viewAmount):
@@ -450,21 +464,25 @@ while True:
                         print(printString)
             print("Favorite games:")
             for i in range(viewAmount):
-                if topGameNames[i - viewAmount] in favoriteGames:
-                    print(
-                        str(viewAmount - i) + ". " + topGameNames[i - viewAmount] + " has " +
-                        str(round(int(gameViewers[i - viewAmount]))) + " viewers watching " +
-                        str(round(int(gameStreams[i - viewAmount]))) + " streams with a viewer ratio of: " +
-                        str(round(gameViewerRatio[i - viewAmount], 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                        str(round(gameViewersMedian[i - viewAmount], 2)) + " viewers and a viewer to median ratio of: " +
-                        str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
-                    )
+                if viewerRatioMedianRatioSorted[i - viewAmount] > 0:
+                    if topGameNames[i - viewAmount] in favoriteGames:
+                        print(
+                            str(viewAmount - i) + ". " + topGameNames[i - viewAmount] + " has " +
+                            str(round(int(gameViewers[i - viewAmount]))) + " viewers watching " +
+                            str(round(int(gameStreams[i - viewAmount]))) + " streams with a viewer ratio of: " +
+                            str(round(gameViewerRatio[i - viewAmount], 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
+                            str(round(gameViewersMedian[i - viewAmount], 2)) + " viewers and a viewer to median ratio of: " +
+                            str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
+                        )
             print(str(worthGames) + ' games worth streaming')
         print("Data from the last minute")
     elif 0 < loops < loopAmount:
         printData()
+        if firstRun:
+            printStrings()
     elif loops == loopAmount:
         printData()
+        printStrings()
         firstRun = False
         loops = 0
     now = datetime.datetime.now()
