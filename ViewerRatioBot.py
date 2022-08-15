@@ -103,12 +103,13 @@ def getMoreStreams(i):
             pagination = r['pagination']['cursor']
             gameStreams[i] = str(int(gameStreams[i]) + int(len(r['data'])))
             for a in r['data']:
-                gameViewers[i] = str(int(gameViewers[i]) + int(a['viewer_count']))
-                medianList[i].append(int(a['viewer_count']))
-                if not a['tag_ids'] is None:
-                    if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in a['tag_ids']:
-                        if not a['game_id'] in dropsGames:
-                            dropsGames.append(e['game_id'])
+                if not e['user_name'] in streamersAbove1000Avg:
+                    gameViewers[i] = str(int(gameViewers[i]) + int(a['viewer_count']))
+                    medianList[i].append(int(a['viewer_count']))
+                    if not a['tag_ids'] is None:
+                        if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in a['tag_ids']:
+                            if not a['game_id'] in dropsGames:
+                                dropsGames.append(e['game_id'])
             getMoreStreams(i)
     except Exception as x:
         print(x)
@@ -136,7 +137,7 @@ def printData():
     global viewerRatioMedianRatioLoopedPrinted
     global viewerRatioMedianRatioLoopedSorted
     global minStreams
-    for i in range(len(topGameIds)):
+    for i in range(len(topGameNames)):
         existingGame = False
         for h in range(len(hostGamesLooped)):
             if testing:
@@ -323,6 +324,8 @@ while True:
             if testing:
                 print("The top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
                 print("The top game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
+                print("The old top game ids are: " + str(len(hostGamesLooped)) + " " + str(hostGamesLooped))
+                print("The old top game ids are: " + str(len(topGameIdsLooped)) + " " + str(topGameIdsLooped))
             for i in range(len(topGameIdsLooped)):
                 if not topGameIdsLooped[i] in topGameIds:
                     topGameIds.append(topGameIdsLooped[i])
@@ -347,21 +350,23 @@ while True:
                 if r['pagination'] == {}:
                     gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
                     for e in r['data']:
-                        gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
-                        medianList[i].append(int(e['viewer_count']))
-                        if not e['tag_ids'] is None:
-                            if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
-                                if not e['game_id'] in dropsGames:
-                                    dropsGames.append(e['game_id'])
+                        if not e['user_name'] in streamersAbove1000Avg:
+                            gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
+                            medianList[i].append(int(e['viewer_count']))
+                            if not e['tag_ids'] is None:
+                                if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
+                                    if not e['game_id'] in dropsGames:
+                                        dropsGames.append(e['game_id'])
                 else:
                     gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
                     for e in r['data']:
-                        gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
-                        medianList[i].append(int(e['viewer_count']))
-                        if not e['tag_ids'] is None:
-                            if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
-                                if not e['game_id'] in dropsGames:
-                                    dropsGames.append(e['game_id'])
+                        if not e['user_name'] in streamersAbove1000Avg:
+                            gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
+                            medianList[i].append(int(e['viewer_count']))
+                            if not e['tag_ids'] is None:
+                                if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
+                                    if not e['game_id'] in dropsGames:
+                                        dropsGames.append(e['game_id'])
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
                 if testing:
