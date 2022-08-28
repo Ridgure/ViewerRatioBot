@@ -8,7 +8,9 @@
   <br>
 </h1>
 
-<h4 align="center">An IRC bot written in python and made for my Twitch channel <a href="https://twitch.tv/ridgure" target="_blank">Twitch.tv/Ridgure</a>.</h4>
+<h4 align="center">A bot written in python and made for my Twitch channel <a href="https://twitch.tv/ridgure" target="_blank">Twitch.tv/Ridgure</a>.</h4>
+<div align="center">Are you stuck streaming a category on twitch that is completely over saturated? Want to make use of the potential of the viewers that exist on Twitch? Then this is the bot for you. This bot checks how many viewers there are in a category and recommends if this category is good to stream or not.</div>
+
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
@@ -81,7 +83,7 @@ http://localhost/#access_token=<Token>&scope=channel_subscriptions+user_read+cha
 
 You will need to install these things to run the bot
 
-- [Python 2.7.x](https://www.python.org/downloads/)
+- [Python 3.10.x](https://www.python.org/downloads/)
 - Libraries:
   - [Requests](http://docs.python-requests.org/en/master/user/install/)
   
