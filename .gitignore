@@ -4,5 +4,6 @@
 venv/
 .idea
 ViewerRatioConfig.py
+blacklistedStreams.py
 *.pyc
 UnwantedTwitch_Blacklist.json

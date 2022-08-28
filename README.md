@@ -21,14 +21,15 @@
 
 **Automated functions:**
 
-| Done by the bot automatically:                                      |
-|---------------------------------------------------------------------|
-| Checks all the streamed games on Twitch                             |
-| Checks all the streams for those games                              |
-| Checks all the tags for those streams                               |
-| Filters out blacklisted streams                                     |
-| Filters out streams with drops                                      |
-| Averages out the data over the course of a specified amount of time |
+| Done by the bot automatically:                                            |
+|---------------------------------------------------------------------------|
+| Checks all the streamed games on Twitch                                   |
+| Checks all the streams for those games with the language English or other |
+| Checks all the tags for those streams                                     |
+| Filters out blacklisted streams                                           |
+| Filters out streams with drops                                            |
+| Filters out streams longer than 18 hours                                  |
+| Averages out the data over the course of a specified amount of time       |
 
 ## Getting started
 
