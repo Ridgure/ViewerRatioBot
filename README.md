@@ -26,8 +26,9 @@
 | Checks all the streamed games on Twitch                                   |
 | Checks all the streams for those games with the language English or other |
 | Checks all the tags for those streams                                     |
-| Filters out blacklisted streams                                           |
-| Filters out streams with drops                                            |
+| Black/whitelist of streams                                                |
+| Black/whitelist of tags                                                   |
+| Filters out categories with drops                                         |
 | Filters out streams longer than 18 hours                                  |
 | Averages out the data over the course of a specified amount of time       |
 
