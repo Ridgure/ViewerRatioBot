@@ -15,7 +15,7 @@
 <p align="center">
   <a href="#favorite-games">Favorite games</a> •
   <a href="#whitelist">Whitelist</a> •
-  <a href="#blacklist">Blacklist</a> •
+  <a href="#blacklist">Blacklist</a>
 </p>
 
 ## Favorite games:
@@ -116,6 +116,7 @@ Pokémon FireRed/LeafGreen, Pokémon Crystal, Crystalis, Pokémon HeartGold/Soul
 **Idle games:**
 Idle Champions of the Forgotten Realms, Cookie Clicker, Idle skilling, Leaf Blower Resolution: Idle Game
 
+<a href="#white-black-list">Back to top</a>
 ## Whitelist:
 
 **Survival:**
@@ -295,6 +296,7 @@ Don't Starve Together, Nuclear Throne, Minecraft Dungeons, Tower Princess, Moonl
 **Idle games:**
 Stacklands
 
+<a href="#white-black-list">Back to top</a>
 ## Blacklist:
 
 **Shooter games:**
@@ -626,3 +628,5 @@ Phantom Dust
 
 **Systems - Other:**
 SOUND VOLTEX EXCEED GEAR
+
+<a href="#white-black-list">Back to top</a>

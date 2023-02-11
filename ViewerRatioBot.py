@@ -63,7 +63,7 @@ combinedTags = []
 newBlacklistAdditions = []
 
 # Debug variable
-testing = True
+testing = False
 testGame = 'Tibia'
 
 # Update blacklist readme file
@@ -86,7 +86,7 @@ f.writelines('\n')
 f.writelines('\n<p align="center">')
 f.writelines('\n  <a href="#favorite-games">Favorite games</a> •')
 f.writelines('\n  <a href="#whitelist">Whitelist</a> •')
-f.writelines('\n  <a href="#blacklist">Blacklist</a> •')
+f.writelines('\n  <a href="#blacklist">Blacklist</a>')
 f.writelines('\n</p>')
 f.writelines('\n')
 f.writelines('\n## Favorite games:')
@@ -95,12 +95,14 @@ for g in range(len(favoriteGames)):
     f.writelines('\n**' + favoriteGames[g][0] + ':**')
     f.writelines('\n' + ', '.join(favoriteGames[g][1]))
     f.writelines('\n')
+f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Whitelist:')
 f.writelines('\n')
 for w in range(len(wishlisted)):
     f.writelines('\n**' + wishlisted[w][0] + ':**')
     f.writelines('\n' + ', '.join(wishlisted[w][1]))
     f.writelines('\n')
+f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Blacklist:')
 f.writelines('\n')
 for b in range(len(blacklist)):
@@ -110,6 +112,7 @@ for b in range(len(blacklist)):
         blacklistedGames.append(blacklist[b][1][g][0])
     f.writelines('\n' + ', '.join(blacklistedGames))
     f.writelines('\n')
+f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.close()
 os.replace('tmpfile.py', 'blackWhitelist.md')
 print('Black/whitelist has been updated')
