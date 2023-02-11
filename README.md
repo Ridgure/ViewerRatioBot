@@ -29,6 +29,7 @@
 | Checks all the streams for those games with the language English or other |
 | Checks all the tags for those streams                                     |
 | Black/whitelist of streams                                                |
+| Black/whitelist of titles for all games or per game                       |
 | Black/whitelist of tags                                                   |
 | Filters out categories with drops                                         |
 | Filters out streams longer than 18 hours                                  |

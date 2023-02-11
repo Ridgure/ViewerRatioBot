@@ -4,11 +4,15 @@
 
 import datetime
 import math
+import os
+
 import requests
+import re
 from ViewerRatioConfig import *
-from ViewerRatioLists import *
 from blacklistedStreams import *
+from ViewerRatioLists import *
 from tags import *
+from output import *
 global gameViewers
 global pagination
 global paginationTopGames
@@ -35,6 +39,12 @@ global loopStart
 global tagIds
 global combinedTags
 global newGames
+global totalGames
+global totalViewers
+global totalStreams
+global totalViewerRatio
+global totalViewersMedian
+global totalViewerRatioMedianRatio
 
 # Globals permanent through while true loops
 gameViewersLooped = []
@@ -50,10 +60,11 @@ dropsGames = []
 firstRun = True
 tagIds = []
 combinedTags = []
-newGames = []
+newBlacklistAdditions = []
 
 # Debug variable
 testing = False
+testGame = 'Tibia'
 
 def getMoreGameViewers():
     global pagination
@@ -110,29 +121,64 @@ def getMoreStreams(i):
         if not r['pagination'] == {}:
             pagination = r['pagination']['cursor']
             gameStreams[i] = str(int(gameStreams[i]) + int(len(r['data'])))
-            for a in r['data']:
-                startedAt = a['started_at']
+            for e in r['data']:
+                if testing:
+                    if e['game_id'] == 'Lineage 2':
+                        print(e['user_name'])
+                startedAt = e['started_at']
                 year, month, day, hour, minute, second = int(startedAt[0:4]), int(startedAt[5:7]), int(startedAt[8:10]), int(startedAt[11:13]), int(startedAt[14:16]), int(startedAt[17:19])
                 startedAt = datetime.datetime(year, month, day, hour, minute, second)
                 now = datetime.datetime.now()
                 hours, minutes, seconds = convert_timedelta(now - startedAt)
-                if not a['tag_ids'] is None:
-                    for h in range(len(a['tag_ids'])):
-                        if not a['tag_ids'][h] in tagIds:
-                            tagIds.append(a['tag_ids'][h])
+                if not e['tag_ids'] is None:
+                    for h in range(len(e['tag_ids'])):
+                        if not e['tag_ids'][h] in tagIds:
+                            tagIds.append(e['tag_ids'][h])
                 if not hours > 18:
-                    if not a['user_name'] in blacklistedStreams:
-                        if not a['tag_ids'] is None:
-                            blacklistedTag = False
+                    if not e['user_name'] in blacklistedStreams:
+                        blacklisted = False
+                        if not e['tag_ids'] is None:
                             for b in range(len(blacklistedTags)):
-                                if a['tag_ids'] == blacklistedTags[b][1]:
-                                    blacklistedTag = True
-                            if not blacklistedTag:
-                                gameViewers[i] = str(int(gameViewers[i]) + int(a['viewer_count']))
-                                medianList[i].append(int(a['viewer_count']))
-                            if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in a['tag_ids']:
-                                if not a['game_id'] in dropsGames:
+                                if e['tag_ids'] == blacklistedTags[b][1]:
+                                    blacklisted = True
+                                    break
+                            if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
+                                if not e['game_id'] in dropsGames:
                                     dropsGames.append(e['game_id'])
+                        for b in range(len(blacklistedTitles)):
+                            if b == 0:
+                                for t in range(len(blacklistedTitles[b][1])):
+                                    if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                        blacklisted = True
+                                        break
+                            elif e['game_name'] == blacklistedTitles[b][0]:
+                                for t in range(len(blacklistedTitles[b][1])):
+                                    if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                        blacklisted = True
+                                        break
+                        for b in range(len(blacklistedPartialStreams)):
+                            if b == 0:
+                                if blacklistedPartialStreams[b][1][0]:
+                                    for t in range(len(blacklistedPartialStreams[b][1])):
+                                        if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' +
+                                                     blacklistedPartialStreams[b][1][t][1].lower() + ')',
+                                                     e['user_name'].lower()):
+                                            blacklisted = True
+                                            break
+                            elif e['game_name'].lower() == blacklistedPartialStreams[b][0].lower():
+                                for t in range(len(blacklistedPartialStreams[b][1])):
+                                    if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' +
+                                                 blacklistedPartialStreams[b][1][t][1].lower() + ')',
+                                                 e['user_name'].lower()):
+                                        blacklisted = True
+                                        break
+                        if not blacklisted:
+                            gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
+                            medianList[i].append(int(e['viewer_count']))
+                            if testing:
+                                if e['game_name'].lower() == testGame:
+                                    print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(
+                                        e['viewer_count']) + " viewers  for a total of " + str(gameViewers[i]) + " viewers so far")
             getMoreStreams(i)
     except Exception as x:
         print(x)
@@ -241,6 +287,7 @@ def printData():
     dummy[:], gameViewersMedianLoopedPrinted[:] = zip(*sorted(zip(viewerRatioMedianRatioLoopedPrinted, gameViewersMedianLoopedPrinted), key=lambda p: (p[0], p[1])))
     viewerRatioMedianRatioLoopedSorted = sorted(viewerRatioMedianRatioLoopedSorted)
 
+
 def printStrings():
     global worthGames
     global gameViewersLooped
@@ -256,6 +303,13 @@ def printStrings():
     global gameViewersMedianLoopedPrinted
     global viewerRatioMedianRatioLoopedPrinted
     global viewerRatioMedianRatioLoopedSorted
+    global newGames
+    global totalGames
+    global totalViewers
+    global totalStreams
+    global totalViewerRatio
+    global totalViewersMedian
+    global totalViewerRatioMedianRatio
     viewAmount = len(hostGamesLooped)
     for i in range(viewAmount):
         if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
@@ -267,51 +321,103 @@ def printStrings():
                 viewerRatioMedianRatioLoopedAverage = 0
             else:
                 viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedSorted[i - viewAmount] / loops
-            if viewerRatioMedianRatioLoopedAverage > 0:
-                worthGames = worthGames + 1
-                printString = (str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
-                               str(round(gameViewersLoopedAverage)) + " viewers watching " +
-                               str(round(gameStreamsLoopedAverage)) + " streams with a viewer ratio of: " +
-                               str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                               str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
-                               str(round(viewerRatioMedianRatioLoopedAverage)))
-                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
+            if viewerRatioMedianRatioLoopedAverage > 30 and gameViewersMedianLoopedAverage > 7:
+                totalGames = totalGames + 1
+                totalViewers = totalViewers + int(gameViewersLoopedAverage)
+                totalStreams = totalStreams + int(gameStreamsLoopedAverage)
+                totalViewerRatio = totalViewerRatio + gameViewerRatioLoopedAverage
+                totalViewersMedian = totalViewersMedian + gameViewersMedianLoopedAverage
+                totalViewerRatioMedianRatio = totalViewerRatioMedianRatio + viewerRatioMedianRatioLoopedAverage
+            printString = (str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
+                           str(round(gameViewersLoopedAverage)) + "v watching " +
+                           str(round(gameStreamsLoopedAverage)) + "s with a vrat of: " +
+                           str(round(gameViewerRatioLoopedAverage, 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
+                           str(round(gameViewersMedianLoopedAverage, 2)) + "v and a vmrat of: " +
+                           str(round(viewerRatioMedianRatioLoopedAverage)))
+            if hostGamesLoopedPrinted[i - viewAmount] == 'Minecraft' or hostGamesLoopedPrinted[i - viewAmount] == 'Satisfactory':
+                if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                    print('\033[34m' + printString + '\033[0m')
+                elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
                     print('\033[32m' + printString + '\033[0m')
-                elif hostGamesLoopedPrinted[i - viewAmount] in wishlisted:
-                    print('\033[33m' + printString + '\033[0m')
                 else:
                     print(printString)
-                    newGame = True
-                    for n in range(len(newGames)):
-                        if newGames[n] == hostGamesLoopedPrinted[i - viewAmount]:
-                            newGame = False
-                    if newGame:
+            elif viewerRatioMedianRatioLoopedAverage > 0:
+                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
+                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                        print('\033[34m' + printString + '\033[0m')  # Blue
+                    else:
+                        print('\033[32m' + printString + '\033[0m')  # Green
+                elif hostGamesLoopedPrinted[i - viewAmount] in wishlisted:
+                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                        print('\033[34m' + printString + '\033[0m')  # Blue
+                    else:
+                        print('\033[33m' + printString + '\033[0m')  # Yellow
+                else:
+                    print(printString)
+                if hostGamesLoopedPrinted[i - viewAmount] not in favoriteGames and hostGamesLoopedPrinted[i - viewAmount] not in wishlisted:
+                    newGameLooped = True
+                    for y in range(len(newGames)):
+                        if newGames[y] == hostGamesLoopedPrinted[i - viewAmount]:
+                            newGameLooped = False
+                    if newGameLooped:
                         newGames.append(hostGamesLoopedPrinted[i - viewAmount])
     print("Favorite games:")
     for i in range(viewAmount):
-        if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
-            gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
-            gameStreamsLoopedAverage = int(gameStreamsLoopedPrinted[i - viewAmount]) / loops
-            gameViewerRatioLoopedAverage = gameViewerRatioLoopedPrinted[i - viewAmount]
-            gameViewersMedianLoopedAverage = gameViewersMedianLoopedPrinted[i - viewAmount] / loops
-            if gameViewersMedianLoopedAverage == 0:
-                viewerRatioMedianRatioLoopedAverage = 0
+        gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
+        gameStreamsLoopedAverage = int(gameStreamsLoopedPrinted[i - viewAmount]) / loops
+        gameViewerRatioLoopedAverage = gameViewerRatioLoopedPrinted[i - viewAmount]
+        gameViewersMedianLoopedAverage = gameViewersMedianLoopedPrinted[i - viewAmount] / loops
+        if gameViewersMedianLoopedAverage == 0:
+            viewerRatioMedianRatioLoopedAverage = 0
+        else:
+            viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedSorted[i - viewAmount] / loops
+        printString = (
+                str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
+                str(round(gameViewersLoopedAverage)) + "v watching " +
+                str(round(gameStreamsLoopedAverage)) + "s with a vrat of: " +
+                str(round(gameViewerRatioLoopedAverage, 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
+                str(round(gameViewersMedianLoopedAverage, 2)) + "v and a vmrat of: " +
+                str(round(viewerRatioMedianRatioLoopedAverage))
+        )
+        if hostGamesLoopedPrinted[i - viewAmount] == 'Minecraft' or hostGamesLoopedPrinted[i - viewAmount] == 'Satisfactory':
+            if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                print('\033[34m' + printString + '\033[0m')
+            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                print('\033[32m' + printString + '\033[0m')
             else:
-                viewerRatioMedianRatioLoopedAverage = viewerRatioMedianRatioLoopedSorted[i - viewAmount] / loops
-            if viewerRatioMedianRatioLoopedAverage > 0:
-                print(
-                    str(viewAmount - i) + ". " + hostGamesLoopedPrinted[i - viewAmount] + " has " +
-                    str(round(gameViewersLoopedAverage)) + " viewers watching " +
-                    str(round(gameStreamsLoopedAverage)) + " streams with a viewer ratio of: " +
-                    str(round(gameViewerRatioLoopedAverage, 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                    str(round(gameViewersMedianLoopedAverage, 2)) + " viewers and a viewer to median ratio of: " +
-                    str(round(viewerRatioMedianRatioLoopedAverage))
-                )
-    print(str(worthGames) + ' games worth streaming')
+                print(printString)
+        elif viewerRatioMedianRatioLoopedAverage > 0:
+            if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
+                if viewerRatioMedianRatioLoopedAverage >= 1000:
+                    print('\033[34m' + printString + '\033[0m')
+                elif 1000 > viewerRatioMedianRatioLoopedAverage > 300:
+                    print('\033[32m' + printString + '\033[0m')
+                else:
+                    print(printString)
+            elif hostGamesLoopedPrinted[i - viewAmount] in wishlisted and viewerRatioMedianRatioLoopedAverage > 300:
+                print('\033[33m' + printString + '\033[0m')
+    print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
     if newGames:
-        print("The new games are: " + str(newGames))
+        newGamesReversed = newGames[:]
+        newGamesReversed.reverse()
+        print("The new games are: " + str(newGamesReversed))
     if combinedTags:
         print("New tags are: " + str(combinedTags))
+
+    hostGamesLoopedPrintedReversed = hostGamesLoopedPrinted[:]
+    hostGamesLoopedPrintedReversed.reverse()
+    # Write games to a txt file
+    f = open("tmpfile.py", "w", encoding='utf-8')
+    f.writelines("# !/usr/bin/env python")
+    f.writelines("\n# -*- coding: utf-8 -*-")
+    f.writelines("\n# output.py")
+    f.writelines("\nhostGames = " + str(hostGamesLoopedPrintedReversed))
+    f.writelines("\nnewGames = " + str(newGames))
+    f.writelines("\ncombinedTags = " + str(combinedTags))
+    f.writelines("\nnewBlacklistAdditionsOutput = " + str(newBlacklistAdditions))
+    f.writelines("\n")
+    f.close()
+    os.replace('tmpfile.py', 'output.py')
 
 
 def convert_timedelta(duration):
@@ -321,15 +427,46 @@ def convert_timedelta(duration):
     seconds = (seconds % 60)
     return hours, minutes, seconds
 
+
 # Print new blacklist additions
-if not newBlacklistAdditions == []:
+if not newGames == []:
     if testing:
-        print("Getting blacklist game ids. total " + str(len(blacklist)) + " games blacklisted")
-    for i in range(len(newBlacklistAdditions)):
-        url = "https://api.twitch.tv/helix/games?name=" + newBlacklistAdditions[i]
+        print("Getting blacklist game ids. A total of " + str(len(blacklist)) + " games blacklisted and " + str(len(favoriteGames)) + " games whitelisted for a total of " + str(len(blacklist) + len(favoriteGames)) + " games analyzed")
+    for i in range(len(newGames)):
+        if "+" in newGames[i]:
+            newGames[i] = re.sub(r"\+", "%2b", newGames[i])
+        if "&" in newGames[i]:
+            newGames[i] = re.sub(r"&", "%26", newGames[i])
+        if ":" in newGames[i]:
+            newGames[i] = re.sub(r"&", "%26", newGames[i])
+        url = "https://api.twitch.tv/helix/games?name=" + newGames[i]
         params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
-        r = requests.get(url, headers=params).json()
-        newBlacklistAdditions[i] = [newBlacklistAdditions[i], r['data'][0]['id']]
+        request = requests.get(url, headers=params)
+        r = request.json()
+        if request.status_code == 200:
+            pass
+        elif request.status_code == 400:
+            print("Bad request")
+        elif request.status_code == 429:
+            print("Too many game requests")
+        try:
+            newBlacklistAdditions.append([newGames[i], r['data'][0]['id']])
+        except Exception as e:
+            print("Error in appending new blacklist additions")
+            print(e)
+            if r['data'] == []:
+                print('The category ' + newGames[i] + ' does no longer exist and will be removed from the list of new games')
+                f = open("output.py", "r", encoding='utf-8')
+                outputLines = f.readlines()
+                f.close()
+                f = open("tmpfile.py", "w", encoding='utf-8')
+                outputLines[4] = outputLines[4].replace(", '" + newGames[i] + "'", '')
+                for l in range(len(outputLines)):
+                    f.writelines(outputLines[l])
+                f.close()
+                os.replace('tmpfile.py', 'output.py')
+            else:
+                quit()
     if newBlacklistAdditions:
         print("New blacklist additions are: " + str(newBlacklistAdditions))
 else:
@@ -352,6 +489,12 @@ while True:
         stopGettingGames = 0
         pagination = ""
         paginationTopGames = ""
+        totalGames = 0
+        totalViewers = 0
+        totalStreams = 0
+        totalViewerRatio = 0
+        totalViewersMedian = 0
+        totalViewerRatioMedianRatio = 0
 
         print("Getting streamed games")
         if loops == 0:
@@ -399,8 +542,8 @@ while True:
                 if testing:
                     if i == 0:
                         print('Getting info for games')
-                    if topGameNames[i] == 'Minecraft':
-                        print("Getting info for Minecraft")
+                    if topGameNames[i] == testGame:
+                        print("Getting info for " + testGame)
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
                 params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
                 r = requests.get(url, headers=params).json()
@@ -417,17 +560,44 @@ while True:
                         hours, minutes, seconds = convert_timedelta(now - startedAt)
                         if not hours > 18:
                             if not e['user_name'] in blacklistedStreams:
+                                blacklisted = False
                                 if not e['tag_ids'] is None:
-                                    blacklistedTag = False
                                     for b in range(len(blacklistedTags)):
                                         if e['tag_ids'] == blacklistedTags[b][1]:
-                                            blacklistedTag = True
-                                    if not blacklistedTag:
-                                        gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
-                                        medianList[i].append(int(e['viewer_count']))
+                                            blacklisted = True
+                                            break
                                     if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
                                         if not e['game_id'] in dropsGames:
                                             dropsGames.append(e['game_id'])
+                                for b in range(len(blacklistedTitles)):
+                                    if b == 0:
+                                        for t in range(len(blacklistedTitles[b][1])):
+                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                blacklisted = True
+                                                break
+                                    elif e['game_name'] == blacklistedTitles[b][0]:
+                                        for t in range(len(blacklistedTitles[b][1])):
+                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                blacklisted = True
+                                                break
+                                for b in range(len(blacklistedPartialStreams)):
+                                    if b == 0:
+                                        if blacklistedPartialStreams[b][1][0]:
+                                            for t in range(len(blacklistedPartialStreams[b][1])):
+                                                if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
+                                                    blacklisted = True
+                                                    break
+                                    elif e['game_name'].lower() == blacklistedPartialStreams[b][0].lower():
+                                        for t in range(len(blacklistedPartialStreams[b][1])):
+                                            if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
+                                                blacklisted = True
+                                                break
+                                if not blacklisted:
+                                    gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
+                                    medianList[i].append(int(e['viewer_count']))
+                                    if testing:
+                                        if e['game_name'].lower() == testGame:
+                                            print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
                 else:
                     gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
                     for e in r['data']:
@@ -438,17 +608,67 @@ while True:
                         hours, minutes, seconds = convert_timedelta(now - startedAt)
                         if not hours > 18:
                             if not e['user_name'] in blacklistedStreams:
-                                gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
-                                medianList[i].append(int(e['viewer_count']))
+                                blacklisted = False
                                 if not e['tag_ids'] is None:
+                                    for b in range(len(blacklistedTags)):
+                                        if e['tag_ids'] == blacklistedTags[b][1]:
+                                            blacklisted = True
+                                            break
                                     if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
                                         if not e['game_id'] in dropsGames:
                                             dropsGames.append(e['game_id'])
+                                for b in range(len(blacklistedTitles)):
+                                    if b == 0:
+                                        for t in range(len(blacklistedTitles[b][1])):
+                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                blacklisted = True
+                                                break
+                                    elif e['game_name'] == blacklistedTitles[b][0]:
+                                        for t in range(len(blacklistedTitles[b][1])):
+                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                blacklisted = True
+                                                break
+                                for b in range(len(blacklistedPartialStreams)):
+                                    if b == 0:
+                                        if blacklistedPartialStreams[b][1][0]:
+                                            for t in range(len(blacklistedPartialStreams[b][1])):
+                                                if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
+                                                    blacklisted = True
+                                                    break
+                                    elif e['game_name'].lower() == blacklistedPartialStreams[b][0].lower():
+                                        for t in range(len(blacklistedPartialStreams[b][1])):
+                                            if len(blacklistedPartialStreams[b][1][t]) == 1:
+                                                if blacklistedPartialStreams[b][1][t][0].lower() == e['user_name'].lower():
+                                                    if testing:
+                                                        if topGameNames[i] == 'Tibia':
+                                                            print(e['user_name'])
+                                                    blacklisted = True
+                                                    break
+                                            elif re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
+                                                if testing:
+                                                    if topGameNames[i] == 'Tibia':
+                                                        print(e['user_name'])
+                                                blacklisted = True
+                                                break
+                                if not blacklisted:
+                                    gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
+                                    medianList[i].append(int(e['viewer_count']))
+                                    if testing:
+                                        if e['game_name'].lower() == testGame:
+                                            print(
+                                                e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(
+                                                    e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
                 if testing:
                     if topGameNames[i] == 'Minecraft':
                         print("Info for Minecraft has been gotten")
+                    if topGameNames[i] == testGame:
+                        print("Info for " + testGame + " has been gotten")
+                # If all viewers are in top 90% set views to 0
+                for m in range(len(medianList[i])):
+                    if int(medianList[i][m]) > (int(gameViewers[i]) * (topStreamerPercentage / 100)):
+                        gameViewers[i] = 0
                 if math.trunc(int(gameStreams[i])) < minStreams:
                     gameViewersMedian.append(0)
                 else:
@@ -459,17 +679,28 @@ while True:
                         median = medianList[i][casterPercentile]
                     gameViewersMedian.append(median)
                 if firstRun:
-                    if i % 50 == 0:
-                        print(str(i) + " of " + str(len(topGameIds)))
                     if (i + 1) == len(topGameIds):
                         print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                    elif i <= 5:
+                        print(str(i) + " of " + str(len(topGameIds)))
+                    elif 10 <= i < 50:
+                        if i % 10 == 0:
+                            print(str(i) + " of " + str(len(topGameIds)))
+                    elif i % 50 == 0:
+                        print(str(i) + " of " + str(len(topGameIds)))
                 else:
-                    if i % 100 == 0:
-                        print(str(i) + " of " + str(len(topGameIds)))
-                    if (i + 1) == len(topGameIds):
-                        print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                    if len(topGameIds) < 200:
+                        if (i + 1) == len(topGameIds):
+                            print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                        elif i % 50 == 0:
+                            print(str(i) + " of " + str(len(topGameIds)))
+                    else:
+                        if (i + 1) == len(topGameIds):
+                            print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                        elif i % 100 == 0:
+                            print(str(i) + " of " + str(len(topGameIds)))
         except Exception as e:
-            print("Error in getting streamed games")
+
             print(e)
     except Exception as x:
         print(x)
@@ -485,7 +716,9 @@ while True:
         print(len(topGameIds), topGameIds)
         for g in range(len(topGameIds)):
             if topGameNames[g] == 'Minecraft':
-                print("Minecraft has: " + str(gameViewers[g]) + " viewers")
+                print(topGameNames[g] + " has: " + str(gameViewers[g]) + " viewers")
+            if topGameNames[g] == testGame:
+                print(topGameNames[g] + " has: " + str(gameViewers[g]) + " viewers")
 
     newKeys = []
     newTags = []
@@ -536,7 +769,9 @@ while True:
         if testing:
             for i in range(len(topGameIds)):
                 if topGameNames[i] == 'Minecraft':
-                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
+                if topGameNames[i] == testGame:
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
 
     for i in range(len(topGameIds)):
         if int(gameViewers[i]) < minViewers:
@@ -565,7 +800,6 @@ while True:
     viewAmount = len(topGameIds)
     loopAmount = 5
     loops = loops + 1
-    worthGames = 0
 
     # Calculate if the loop should be reset after this
     now = datetime.datetime.now()
@@ -588,7 +822,9 @@ while True:
             print("Before sorting")
             for i in range(len(topGameIds)):
                 if topGameNames[i] == 'Minecraft':
-                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
+                if topGameNames[i] == testGame:
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
 
         if testing:
             print(topGameNames)
@@ -613,17 +849,25 @@ while True:
             print("After sorting")
             for i in range(len(topGameIds)):
                 if topGameNames[i] == 'Minecraft':
-                    print("Minecraft has: " + str(gameViewers[i]) + " viewers")
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
+                if topGameNames[i] == testGame:
+                    print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
 
         if firstRun:
             for i in range(viewAmount):
                 if viewerRatioMedianRatioSorted[i - viewAmount] > 0:
-                    worthGames = worthGames + 1
+                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) > 30 and gameViewersMedian[i - viewAmount] > 7:
+                        totalGames = totalGames + 1
+                        totalViewers = totalViewers + int(gameViewers[i - viewAmount])
+                        totalStreams = totalStreams + int(gameStreams[i - viewAmount])
+                        totalViewerRatio = totalViewerRatio + gameViewerRatio[i - viewAmount]
+                        totalViewersMedian = totalViewersMedian + gameViewersMedian[i - viewAmount]
+                        totalViewerRatioMedianRatio = totalViewerRatioMedianRatio + viewerRatioMedianRatioSorted[i - viewAmount]
                     printString = (str(viewAmount - i) + ". " + topGameNames[i - viewAmount] + " has " +
-                                   str(round(int(gameViewers[i - viewAmount]))) + " viewers watching " +
-                                   str(round(int(gameStreams[i - viewAmount]))) + " streams with a viewer ratio of: " +
-                                   str(round(gameViewerRatio[i - viewAmount], 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                                   str(round(gameViewersMedian[i - viewAmount], 2)) + " viewers and a viewer to median ratio of: " +
+                                   str(round(int(gameViewers[i - viewAmount]))) + "v watching " +
+                                   str(round(int(gameStreams[i - viewAmount]))) + "s with a vrat of: " +
+                                   str(round(gameViewerRatio[i - viewAmount], 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
+                                   str(round(gameViewersMedian[i - viewAmount], 2)) + "v and a vmrat of: " +
                                    str(round(viewerRatioMedianRatioSorted[i - viewAmount])))
                     if topGameNames[i - viewAmount] in favoriteGames:
                         print('\033[32m' + printString + '\033[0m')
@@ -631,6 +875,7 @@ while True:
                         print('\033[33m' + printString + '\033[0m')
                     else:
                         print(printString)
+                    if topGameNames[i - viewAmount] not in favoriteGames and topGameNames[i - viewAmount] not in wishlisted:
                         newGame = True
                         for n in range(len(newGames)):
                             if newGames[n] == topGameNames[i - viewAmount]:
@@ -639,19 +884,44 @@ while True:
                             newGames.append(topGameNames[i - viewAmount])
             print("Favorite games:")
             for i in range(viewAmount):
-                if viewerRatioMedianRatioSorted[i - viewAmount] > 0:
-                    if topGameNames[i - viewAmount] in favoriteGames:
-                        print(
+                if topGameNames[i - viewAmount] == 'Minecraft' or topGameNames[i - viewAmount] == 'Satisfactory':
+                    printString = (
                             str(viewAmount - i) + ". " + topGameNames[i - viewAmount] + " has " +
-                            str(round(int(gameViewers[i - viewAmount]))) + " viewers watching " +
-                            str(round(int(gameStreams[i - viewAmount]))) + " streams with a viewer ratio of: " +
-                            str(round(gameViewerRatio[i - viewAmount], 2)) + " and the stream at " + str(casterPercentage) + "% of the category has " +
-                            str(round(gameViewersMedian[i - viewAmount], 2)) + " viewers and a viewer to median ratio of: " +
+                            str(round(int(gameViewers[i - viewAmount]))) + "v watching " +
+                            str(round(int(gameStreams[i - viewAmount]))) + "s with a vrat of: " +
+                            str(round(gameViewerRatio[i - viewAmount], 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
+                            str(round(gameViewersMedian[i - viewAmount], 2)) + "v and a vmrat of: " +
                             str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
-                        )
-            print(str(worthGames) + ' games worth streaming')
+                    )
+                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                        print('\033[34m' + printString + '\033[0m')
+                    elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                        print('\033[32m' + printString + '\033[0m')
+                    else:
+                        print(printString)
+                elif viewerRatioMedianRatioSorted[i - viewAmount] > 0:
+                    printString = (
+                            str(viewAmount - i) + ". " + topGameNames[i - viewAmount] + " has " +
+                            str(round(int(gameViewers[i - viewAmount]))) + "v watching " +
+                            str(round(int(gameStreams[i - viewAmount]))) + "s with a vrat of: " +
+                            str(round(gameViewerRatio[i - viewAmount], 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
+                            str(round(gameViewersMedian[i - viewAmount], 2)) + "v and a vmrat of: " +
+                            str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
+                    )
+                    if topGameNames[i - viewAmount] in favoriteGames:
+                        if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                            print('\033[34m' + printString + '\033[0m')
+                        elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                            print('\033[32m' + printString + '\033[0m')
+                        else:
+                            print(printString)
+                    elif topGameNames[i - viewAmount] in wishlisted and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                        print('\033[33m' + printString + '\033[0m')
+            print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
             if newGames:
-                print("The new games are: " + str(newGames))
+                newGamesReversed = newGames[:]
+                newGamesReversed.reverse()
+                print("The new games are: " + str(newGamesReversed))
             if combinedTags:
                 print("New tags are: " + str(combinedTags))
     elif not restartLoops:
