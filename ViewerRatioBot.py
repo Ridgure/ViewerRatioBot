@@ -63,8 +63,56 @@ combinedTags = []
 newBlacklistAdditions = []
 
 # Debug variable
-testing = False
+testing = True
 testGame = 'Tibia'
+
+# Update blacklist readme file
+print('Updating black/whitelist')
+f = open("tmpfile.py", "w", encoding='utf-8')
+f.writelines('<a href="http://www.twitch.tv/ridgure"><img src="https://pbs.twimg.com/profile_banners/4144666635/1656852039/1500x500" title="FVCproductions" alt="FVCproductions"></a>')
+f.writelines('\n')
+f.writelines('\n<h1 align="center">')
+f.writelines('\n  <br>')
+f.writelines('\n  <a href="http://www.twitch.tv/ridgure"><img src="https://pbs.twimg.com/profile_images/965416492924891136/N-EvLzcd_400x400.jpg" alt="Markdownify" width="200"></a>')
+f.writelines('\n  <br>')
+f.writelines('\n  White black list')
+f.writelines('\n  <br>')
+f.writelines('\n</h1>')
+f.writelines('\n')
+f.writelines('\n<h4 align="center">A black and whitelist containing games I want to and do not want to stream on my Twitch channel <a href="https://twitch.tv/ridgure" target="_blank">Twitch.tv/Ridgure</a>.</h4>')
+f.writelines('\n<div align="center">This list contains games I am interested in wanting to stream depending on the type of game and the community around the game</div>')
+f.writelines('\n')
+f.writelines('\n')
+f.writelines('\n<p align="center">')
+f.writelines('\n  <a href="#favorite-games">Favorite games</a> •')
+f.writelines('\n  <a href="#whitelist">Whitelist</a> •')
+f.writelines('\n  <a href="#blacklist">Blacklist</a> •')
+f.writelines('\n</p>')
+f.writelines('\n')
+f.writelines('\n## Favorite games:')
+f.writelines('\n')
+for g in range(len(favoriteGames)):
+    f.writelines('\n**' + favoriteGames[g][0] + ':**')
+    f.writelines('\n' + ', '.join(favoriteGames[g][1]))
+    f.writelines('\n')
+f.writelines('\n## Whitelist:')
+f.writelines('\n')
+for w in range(len(wishlisted)):
+    f.writelines('\n**' + wishlisted[w][0] + ':**')
+    f.writelines('\n' + ', '.join(wishlisted[w][1]))
+    f.writelines('\n')
+f.writelines('\n## Blacklist:')
+f.writelines('\n')
+for b in range(len(blacklist)):
+    f.writelines('\n**' + blacklist[b][0] + ':**')
+    blacklistedGames = []
+    for g in range(len(blacklist[b][1])):
+        blacklistedGames.append(blacklist[b][1][g][0])
+    f.writelines('\n' + ', '.join(blacklistedGames))
+    f.writelines('\n')
+f.close()
+os.replace('tmpfile.py', 'blackWhitelist.md')
+print('Black/whitelist has been updated')
 
 def getMoreGameViewers():
     global pagination
@@ -342,23 +390,33 @@ def printStrings():
                 else:
                     print(printString)
             elif viewerRatioMedianRatioLoopedAverage > 0:
-                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
-                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
-                        print('\033[34m' + printString + '\033[0m')  # Blue
-                    else:
-                        print('\033[32m' + printString + '\033[0m')  # Green
-                elif hostGamesLoopedPrinted[i - viewAmount] in wishlisted:
-                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
-                        print('\033[34m' + printString + '\033[0m')  # Blue
-                    else:
-                        print('\033[33m' + printString + '\033[0m')  # Yellow
-                else:
-                    print(printString)
-                if hostGamesLoopedPrinted[i - viewAmount] not in favoriteGames and hostGamesLoopedPrinted[i - viewAmount] not in wishlisted:
+                newGameLooped = False
+                printed = False
+                favoriteGame = False
+                wishlistedGame = False
+                for f in range(len(favoriteGames)):
+                    if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames[f][1]:
+                        if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                            print('\033[34m' + printString + '\033[0m')  # Blue
+                        else:
+                            print('\033[32m' + printString + '\033[0m')  # Green
+                        favoriteGame = True
+                        break
+                if not favoriteGame:
+                    for w in range(len(wishlisted)):
+                        if hostGamesLoopedPrinted[i - viewAmount] in wishlisted[w][1]:
+                            if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                print('\033[34m' + printString + '\033[0m')  # Blue
+                            else:
+                                print('\033[33m' + printString + '\033[0m')  # Yellow
+                            wishlistedGame = True
+                            break
+                if not favoriteGame and not wishlistedGame:
                     newGameLooped = True
                     for y in range(len(newGames)):
                         if newGames[y] == hostGamesLoopedPrinted[i - viewAmount]:
                             newGameLooped = False
+                    print(printString)
                     if newGameLooped:
                         newGames.append(hostGamesLoopedPrinted[i - viewAmount])
     print("Favorite games:")
@@ -387,15 +445,19 @@ def printStrings():
             else:
                 print(printString)
         elif viewerRatioMedianRatioLoopedAverage > 0:
-            if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames:
-                if viewerRatioMedianRatioLoopedAverage >= 1000:
-                    print('\033[34m' + printString + '\033[0m')
-                elif 1000 > viewerRatioMedianRatioLoopedAverage > 300:
-                    print('\033[32m' + printString + '\033[0m')
-                else:
-                    print(printString)
-            elif hostGamesLoopedPrinted[i - viewAmount] in wishlisted and viewerRatioMedianRatioLoopedAverage > 300:
-                print('\033[33m' + printString + '\033[0m')
+            for f in range(len(favoriteGames)):
+                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames[f][1]:
+                    if viewerRatioMedianRatioLoopedAverage >= 1000:
+                        print('\033[34m' + printString + '\033[0m')
+                    elif 1000 > viewerRatioMedianRatioLoopedAverage > 300:
+                        print('\033[32m' + printString + '\033[0m')
+                    else:
+                        print(printString)
+                    break
+            for w in range(len(favoriteGames)):
+                if hostGamesLoopedPrinted[i - viewAmount] in wishlisted[w][1] and viewerRatioMedianRatioLoopedAverage > 300:
+                    print('\033[33m' + printString + '\033[0m')
+                    break
     print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
     if newGames:
         newGamesReversed = newGames[:]
@@ -431,7 +493,16 @@ def convert_timedelta(duration):
 # Print new blacklist additions
 if not newGames == []:
     if testing:
-        print("Getting blacklist game ids. A total of " + str(len(blacklist)) + " games blacklisted and " + str(len(favoriteGames)) + " games whitelisted for a total of " + str(len(blacklist) + len(favoriteGames)) + " games analyzed")
+        blacklistedGameAmount = 0
+        favoriteGameAmount = 0
+        wishlistedGameAmount = 0
+        for b in range(len(blacklist)):
+            blacklistedGameAmount = blacklistedGameAmount + len(blacklist[b][1])
+        for f in range(len(favoriteGames)):
+            favoriteGameAmount = favoriteGameAmount + len(favoriteGames[f][1])
+        for w in range(len(wishlisted)):
+            wishlistedGameAmount = wishlistedGameAmount + len(wishlisted[w][1])
+        print("Getting blacklist game ids. " + str(blacklistedGameAmount) + " games blacklisted, " + str(favoriteGameAmount) + " favorite games and " + str(wishlistedGameAmount) + " games wishlisted for a total of " + str(blacklistedGameAmount + favoriteGameAmount + wishlistedGameAmount) + " games analyzed")
     for i in range(len(newGames)):
         if "+" in newGames[i]:
             newGames[i] = re.sub(r"\+", "%2b", newGames[i])
@@ -452,8 +523,6 @@ if not newGames == []:
         try:
             newBlacklistAdditions.append([newGames[i], r['data'][0]['id']])
         except Exception as e:
-            print("Error in appending new blacklist additions")
-            print(e)
             if r['data'] == []:
                 print('The category ' + newGames[i] + ' does no longer exist and will be removed from the list of new games')
                 f = open("output.py", "r", encoding='utf-8')
@@ -466,6 +535,8 @@ if not newGames == []:
                 f.close()
                 os.replace('tmpfile.py', 'output.py')
             else:
+                print("Error in appending new blacklist additions")
+                print(e)
                 quit()
     if newBlacklistAdditions:
         print("New blacklist additions are: " + str(newBlacklistAdditions))
@@ -506,7 +577,8 @@ while True:
         # Extract id from blacklist
         blacklistIds = []
         for i in range(len(blacklist)):
-            blacklistIds.append(blacklist[i][1])
+            for a in range(len(blacklist[i][1])):
+                blacklistIds.append(blacklist[i][1][a][1])
 
         # Remove blacklisted games
         topGameIdsTemp = []
@@ -655,9 +727,7 @@ while True:
                                     medianList[i].append(int(e['viewer_count']))
                                     if testing:
                                         if e['game_name'].lower() == testGame:
-                                            print(
-                                                e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(
-                                                    e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
+                                            print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
                 if testing:
@@ -869,19 +939,27 @@ while True:
                                    str(round(gameViewerRatio[i - viewAmount], 2)) + " and the s at " + str(casterPercentage) + "% of the cat has " +
                                    str(round(gameViewersMedian[i - viewAmount], 2)) + "v and a vmrat of: " +
                                    str(round(viewerRatioMedianRatioSorted[i - viewAmount])))
-                    if topGameNames[i - viewAmount] in favoriteGames:
-                        print('\033[32m' + printString + '\033[0m')
-                    elif topGameNames[i - viewAmount] in wishlisted:
-                        print('\033[33m' + printString + '\033[0m')
-                    else:
-                        print(printString)
-                    if topGameNames[i - viewAmount] not in favoriteGames and topGameNames[i - viewAmount] not in wishlisted:
+                    newGame = False
+                    favoriteGame = False
+                    wishlistedGame = False
+                    for f in range(len(favoriteGames)):
+                        if topGameNames[i - viewAmount] in favoriteGames[f][1]:
+                            print('\033[32m' + printString + '\033[0m')
+                            favoriteGame = True
+                            break
+                    if not favoriteGame:
+                        for w in range(len(wishlisted)):
+                            if topGameNames[i - viewAmount] in wishlisted[w][1]:
+                                print('\033[33m' + printString + '\033[0m')
+                                wishlistedGame = True
+                                break
+                    if not favoriteGame and not wishlistedGame:
                         newGame = True
                         for n in range(len(newGames)):
                             if newGames[n] == topGameNames[i - viewAmount]:
                                 newGame = False
-                        if newGame:
-                            newGames.append(topGameNames[i - viewAmount])
+                        newGames.append(topGameNames[i - viewAmount])
+                        print(printString)
             print("Favorite games:")
             for i in range(viewAmount):
                 if topGameNames[i - viewAmount] == 'Minecraft' or topGameNames[i - viewAmount] == 'Satisfactory':
@@ -908,15 +986,22 @@ while True:
                             str(round(gameViewersMedian[i - viewAmount], 2)) + "v and a vmrat of: " +
                             str(round(viewerRatioMedianRatioSorted[i - viewAmount]))
                     )
-                    if topGameNames[i - viewAmount] in favoriteGames:
-                        if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
-                            print('\033[34m' + printString + '\033[0m')
-                        elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
-                            print('\033[32m' + printString + '\033[0m')
-                        else:
-                            print(printString)
-                    elif topGameNames[i - viewAmount] in wishlisted and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
-                        print('\033[33m' + printString + '\033[0m')
+                    favoriteGame = False
+                    for f in range(len(favoriteGames)):
+                        if topGameNames[i - viewAmount] in favoriteGames[f][1]:
+                            if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                print('\033[34m' + printString + '\033[0m')
+                            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                                print('\033[32m' + printString + '\033[0m')
+                            else:
+                                print(printString)
+                            favoriteGame = True
+                            break
+                    if not favoriteGame:
+                        for w in range(len(wishlisted)):
+                            if topGameNames[i - viewAmount] in wishlisted[w][1] and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                                print('\033[33m' + printString + '\033[0m')
+                                break
             print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
             if newGames:
                 newGamesReversed = newGames[:]
