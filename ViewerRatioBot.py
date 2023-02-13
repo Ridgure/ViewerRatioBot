@@ -90,6 +90,13 @@ f.writelines('\n  <a href="#blacklist">Blacklist</a>')
 f.writelines('\n</p>')
 f.writelines('\n')
 f.writelines('\n## Favorite games:')
+f.writelines('\n')
+f.writelines('\n **Categories:**')
+favoriteCategories = []
+for g in range(len(favoriteGames)):
+    favoriteCategories.append(favoriteGames[g][0])
+f.writelines("\n" + ', '.join(favoriteCategories))
+f.writelines('\n')
 f.writelines('\n|   |**Favorite games**|')
 f.writelines('\n|---|------------------|')
 for g in range(len(favoriteGames)):
@@ -98,6 +105,12 @@ f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Whitelist:')
 f.writelines('\n')
+f.writelines('\n **Categories:**')
+whitelistCategories = []
+for w in range(len(wishlisted)):
+    whitelistCategories.append(wishlisted[w][0])
+f.writelines("\n" + ', '.join(whitelistCategories))
+f.writelines('\n')
 f.writelines('\n|   |**Whitelisted games**|')
 f.writelines('\n|---|---------------------|')
 for w in range(len(wishlisted)):
@@ -105,6 +118,12 @@ for w in range(len(wishlisted)):
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Blacklist:')
+f.writelines('\n')
+f.writelines('\n **Categories:**')
+blacklistCategories = []
+for b in range(len(blacklist)):
+    blacklistCategories.append(blacklist[b][0])
+f.writelines("\n" + ', '.join(blacklistCategories))
 f.writelines('\n')
 f.writelines('\n|   |**Blacklisted games**|')
 f.writelines('\n|---|---------------------|')
