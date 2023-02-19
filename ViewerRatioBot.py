@@ -36,7 +36,6 @@ global gameViewersMedian
 global minStreams
 global minViewers
 global loopStart
-global tagIds
 global combinedTags
 global newGames
 global totalGames
@@ -58,13 +57,13 @@ loops = 0
 worthGames = 0
 dropsGames = []
 firstRun = True
-tagIds = []
+tags = []
 combinedTags = []
 newBlacklistAdditions = []
 
 # Debug variable
 testing = False
-testGame = 'Tibia'
+testGame = 'Minecraft'
 
 # Update blacklist readme file
 print('Updating black/whitelist')
@@ -193,6 +192,8 @@ def getMoreStreams(i):
         if not r['pagination'] == {}:
             pagination = r['pagination']['cursor']
             gameStreams[i] = str(int(gameStreams[i]) + int(len(r['data'])))
+            # if testing:
+            #     print('Getting more streams')
             for e in r['data']:
                 if testing:
                     if e['game_id'] == 'Lineage 2':
@@ -202,21 +203,36 @@ def getMoreStreams(i):
                 startedAt = datetime.datetime(year, month, day, hour, minute, second)
                 now = datetime.datetime.now()
                 hours, minutes, seconds = convert_timedelta(now - startedAt)
-                if not e['tag_ids'] is None:
-                    for h in range(len(e['tag_ids'])):
-                        if not e['tag_ids'][h] in tagIds:
-                            tagIds.append(e['tag_ids'][h])
+                if not e['tags'] is None:
+                    for t in range(len(e['tags'])):
+                        newTag = True
+                        for w in range(len(whitelistedTags)):
+                            if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1]):
+                                newTag = False
+                        if newTag:
+                            for b in range(len(blacklistedTags)):
+                                if e['tags'][t].lower() in (tag.lower() for tag in blacklistedTags[b][1]):
+                                    newTag = False
+                        if newTag and combinedTags:
+                            for c in range(len(combinedTags)):
+                                if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c]):
+                                    newTag = False
+                        if newTag:
+                            combinedTags.append(e['tags'][t])
                 if not hours > 18:
                     if not e['user_name'] in blacklistedStreams:
                         blacklisted = False
-                        if not e['tag_ids'] is None:
-                            for b in range(len(blacklistedTags)):
-                                if e['tag_ids'] == blacklistedTags[b][1]:
-                                    blacklisted = True
+                        for b in range(len(blacklistedTags)):
+                            if not e['tags'] is None:
+                                for t in range(len(e['tags'])):
+                                    if e['tags'][t] in blacklistedTags[b][1]:
+                                        blacklisted = True
+                                        break
+                                    if 'drops' in e['tags'][t]:
+                                        if not e['game_id'] in dropsGames:
+                                            dropsGames.append(e['game_id'])
+                                if blacklisted:
                                     break
-                            if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
-                                if not e['game_id'] in dropsGames:
-                                    dropsGames.append(e['game_id'])
                         for b in range(len(blacklistedTitles)):
                             if b == 0:
                                 for t in range(len(blacklistedTitles[b][1])):
@@ -253,7 +269,10 @@ def getMoreStreams(i):
                                         e['viewer_count']) + " viewers  for a total of " + str(gameViewers[i]) + " viewers so far")
             getMoreStreams(i)
     except Exception as x:
+        print('Error in getting more streams')
         print(x)
+        if testing:
+            raise
     except requests.exceptions.ConnectTimeout:
         print("timeout", urlMore)
 
@@ -419,7 +438,7 @@ def printStrings():
                 favoriteGame = False
                 wishlistedGame = False
                 for f in range(len(favoriteGames)):
-                    if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames[f][1]:
+                    if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                         if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                             print('\033[34m' + printString + '\033[0m')  # Blue
                         else:
@@ -428,7 +447,7 @@ def printStrings():
                         break
                 if not favoriteGame:
                     for w in range(len(wishlisted)):
-                        if hostGamesLoopedPrinted[i - viewAmount] in wishlisted[w][1]:
+                        if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
                             if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                                 print('\033[34m' + printString + '\033[0m')  # Blue
                             else:
@@ -470,7 +489,7 @@ def printStrings():
                 print(printString)
         elif viewerRatioMedianRatioLoopedAverage > 0:
             for f in range(len(favoriteGames)):
-                if hostGamesLoopedPrinted[i - viewAmount] in favoriteGames[f][1]:
+                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                     if viewerRatioMedianRatioLoopedAverage >= 1000:
                         print('\033[34m' + printString + '\033[0m')
                     elif 1000 > viewerRatioMedianRatioLoopedAverage > 300:
@@ -479,16 +498,16 @@ def printStrings():
                         print(printString)
                     break
             for w in range(len(favoriteGames)):
-                if hostGamesLoopedPrinted[i - viewAmount] in wishlisted[w][1] and viewerRatioMedianRatioLoopedAverage > 300:
+                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and viewerRatioMedianRatioLoopedAverage > 300:
                     print('\033[33m' + printString + '\033[0m')
                     break
     print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
     if newGames:
         newGamesReversed = newGames[:]
         newGamesReversed.reverse()
-        print("The new games are: " + str(newGamesReversed))
+        print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
     if combinedTags:
-        print("New tags are: " + str(combinedTags))
+        print("New tags are: " + ', '.join(str(x) for x in combinedTags))
 
     hostGamesLoopedPrintedReversed = hostGamesLoopedPrinted[:]
     hostGamesLoopedPrintedReversed.reverse()
@@ -561,6 +580,8 @@ if not newGames == []:
             else:
                 print("Error in appending new blacklist additions")
                 print(e)
+                if testing:
+                    raise
                 quit()
     if newBlacklistAdditions:
         print("New blacklist additions are: " + str(newBlacklistAdditions))
@@ -614,6 +635,9 @@ while True:
         topGameIds = topGameIdsTemp
         topGameNames = topGameNamesTemp
 
+        # Establish givens
+        from output import *
+
         # Add games that were not included
         existingGame = False
         if loops > 0:
@@ -635,68 +659,30 @@ while True:
             print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
         try:
             for i in range(len(topGameIds)):
-                if testing:
-                    if i == 0:
-                        print('Getting info for games')
-                    if topGameNames[i] == testGame:
-                        print("Getting info for " + testGame)
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
                 params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
                 r = requests.get(url, headers=params).json()
                 gameStreams.append("0")
                 gameViewers.append("0")
                 medianList.append([])
+                if testing:
+                    if i == 0:
+                        print('Getting info for games')
+                    if topGameNames[i] == testGame:
+                        print("Getting info for " + testGame)
                 if r['pagination'] == {}:
-                    gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
-                    for e in r['data']:
-                        startedAt = e['started_at']
-                        year, month, day, hour, minute, second = int(startedAt[0:4]), int(startedAt[5:7]), int(startedAt[8:10]), int(startedAt[11:13]), int(startedAt[14:16]), int(startedAt[17:19])
-                        startedAt = datetime.datetime(year, month, day, hour, minute, second)
-                        now = datetime.datetime.now()
-                        hours, minutes, seconds = convert_timedelta(now - startedAt)
-                        if not hours > 18:
-                            if not e['user_name'] in blacklistedStreams:
-                                blacklisted = False
-                                if not e['tag_ids'] is None:
-                                    for b in range(len(blacklistedTags)):
-                                        if e['tag_ids'] == blacklistedTags[b][1]:
-                                            blacklisted = True
-                                            break
-                                    if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
-                                        if not e['game_id'] in dropsGames:
-                                            dropsGames.append(e['game_id'])
-                                for b in range(len(blacklistedTitles)):
-                                    if b == 0:
-                                        for t in range(len(blacklistedTitles[b][1])):
-                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
-                                                blacklisted = True
-                                                break
-                                    elif e['game_name'] == blacklistedTitles[b][0]:
-                                        for t in range(len(blacklistedTitles[b][1])):
-                                            if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
-                                                blacklisted = True
-                                                break
-                                for b in range(len(blacklistedPartialStreams)):
-                                    if b == 0:
-                                        if blacklistedPartialStreams[b][1][0]:
-                                            for t in range(len(blacklistedPartialStreams[b][1])):
-                                                if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
-                                                    blacklisted = True
-                                                    break
-                                    elif e['game_name'].lower() == blacklistedPartialStreams[b][0].lower():
-                                        for t in range(len(blacklistedPartialStreams[b][1])):
-                                            if re.search('(' + blacklistedPartialStreams[b][1][t][0].lower() + ').*(' + blacklistedPartialStreams[b][1][t][1].lower() + ')', e['user_name'].lower()):
-                                                blacklisted = True
-                                                break
-                                if not blacklisted:
-                                    gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
-                                    medianList[i].append(int(e['viewer_count']))
-                                    if testing:
-                                        if e['game_name'].lower() == testGame:
-                                            print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
+                    pass
                 else:
+                    # if testing:
+                        # print('Getting first streams')
+                        # print(r)
                     gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
                     for e in r['data']:
+                        # Print streams in testgame
+                        # if testing:
+                            # if e['game_name'] == testGame:
+                            #     print(e)
+                            # print('Getting first stream')
                         startedAt = e['started_at']
                         year, month, day, hour, minute, second = int(startedAt[0:4]), int(startedAt[5:7]), int(startedAt[8:10]), int(startedAt[11:13]), int(startedAt[14:16]), int(startedAt[17:19])
                         startedAt = datetime.datetime(year, month, day, hour, minute, second)
@@ -705,14 +691,21 @@ while True:
                         if not hours > 18:
                             if not e['user_name'] in blacklistedStreams:
                                 blacklisted = False
-                                if not e['tag_ids'] is None:
-                                    for b in range(len(blacklistedTags)):
-                                        if e['tag_ids'] == blacklistedTags[b][1]:
-                                            blacklisted = True
-                                            break
-                                    if 'c2542d6d-cd10-4532-919b-3d19f30a768b' in e['tag_ids']:
-                                        if not e['game_id'] in dropsGames:
-                                            dropsGames.append(e['game_id'])
+                                # if testing:
+                                #     print(e['tags'])
+                                for b in range(len(blacklistedTags)):
+                                    if not e['tags'] is None:
+                                        for t in range(len(e['tags'])):
+                                            if 'drops' in e['tags'][t]:
+                                                if not e['game_id'] in dropsGames:
+                                                    dropsGames.append(e['game_id'])
+                                            if e['tags'][t] in (tag.lower() for tag in blacklistedTags[b][1]):
+                                                if testing and e['game_name'] == testGame:
+                                                    print(e['game_name'] + ' stream has the blacklisted tag: ' + e['tags'][t])
+                                                blacklisted = True
+                                                break
+                                    if blacklisted:
+                                        break
                                 for b in range(len(blacklistedTitles)):
                                     if b == 0:
                                         for t in range(len(blacklistedTitles[b][1])):
@@ -754,11 +747,8 @@ while True:
                                             print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
-                if testing:
-                    if topGameNames[i] == 'Minecraft':
-                        print("Info for Minecraft has been gotten")
-                    if topGameNames[i] == testGame:
-                        print("Info for " + testGame + " has been gotten")
+                if testing and topGameNames[i] == testGame:
+                    print("Info for " + testGame + " has been gotten")
                 # If all viewers are in top 90% set views to 0
                 for m in range(len(medianList[i])):
                     if int(medianList[i][m]) > (int(gameViewers[i]) * (topStreamerPercentage / 100)):
@@ -794,10 +784,13 @@ while True:
                         elif i % 100 == 0:
                             print(str(i) + " of " + str(len(topGameIds)))
         except Exception as e:
-
             print(e)
+            if testing:
+                raise
     except Exception as x:
         print(x)
+        if testing:
+            raise
     except requests.exceptions.ConnectTimeout:
         print("timeout", url)
     except KeyboardInterrupt:
@@ -813,30 +806,6 @@ while True:
                 print(topGameNames[g] + " has: " + str(gameViewers[g]) + " viewers")
             if topGameNames[g] == testGame:
                 print(topGameNames[g] + " has: " + str(gameViewers[g]) + " viewers")
-
-    newKeys = []
-    newTags = []
-    for t in range(len(tagIds)):
-        newTag = True
-        for w in range(len(whitelistedTags)):
-            if tagIds[t] == whitelistedTags[w][1]:
-                newTag = False
-        if newTag:
-            for b in range(len(blacklistedTags)):
-                if tagIds[t] == blacklistedTags[b][1]:
-                    newTag = False
-        if newTag:
-            for c in range(len(combinedTags)):
-                if tagIds[t] == combinedTags[c][1]:
-                    newTag = False
-        if newTag:
-            urlTags = "https://api.twitch.tv/helix/tags/streams?tag_id=" + tagIds[t]
-            paramsTags = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
-            r = requests.get(urlTags, headers=paramsTags).json()
-            newTags.append(tagIds[t])
-            newKeys.append(r['data'][0]['localization_names']['en-us'])
-    for i in range(len(newKeys)):
-        combinedTags.append([newKeys[i], newTags[i]])
 
     # remove games with drops
     topGameIdsTemp = []
@@ -967,22 +936,23 @@ while True:
                     favoriteGame = False
                     wishlistedGame = False
                     for f in range(len(favoriteGames)):
-                        if topGameNames[i - viewAmount] in favoriteGames[f][1]:
+                        if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                             print('\033[32m' + printString + '\033[0m')
                             favoriteGame = True
                             break
                     if not favoriteGame:
                         for w in range(len(wishlisted)):
-                            if topGameNames[i - viewAmount] in wishlisted[w][1]:
+                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
                                 print('\033[33m' + printString + '\033[0m')
                                 wishlistedGame = True
                                 break
                     if not favoriteGame and not wishlistedGame:
                         newGame = True
                         for n in range(len(newGames)):
-                            if newGames[n] == topGameNames[i - viewAmount]:
+                            if newGames[n].lower() == topGameNames[i - viewAmount].lower():
                                 newGame = False
-                        newGames.append(topGameNames[i - viewAmount])
+                        if newGame:
+                            newGames.append(topGameNames[i - viewAmount])
                         print(printString)
             print("Favorite games:")
             for i in range(viewAmount):
@@ -1012,7 +982,7 @@ while True:
                     )
                     favoriteGame = False
                     for f in range(len(favoriteGames)):
-                        if topGameNames[i - viewAmount] in favoriteGames[f][1]:
+                        if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                             if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                                 print('\033[34m' + printString + '\033[0m')
                             elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
@@ -1023,16 +993,16 @@ while True:
                             break
                     if not favoriteGame:
                         for w in range(len(wishlisted)):
-                            if topGameNames[i - viewAmount] in wishlisted[w][1] and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
                                 print('\033[33m' + printString + '\033[0m')
                                 break
             print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
             if newGames:
                 newGamesReversed = newGames[:]
                 newGamesReversed.reverse()
-                print("The new games are: " + str(newGamesReversed))
+                print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
             if combinedTags:
-                print("New tags are: " + str(combinedTags))
+                print("New tags are: " + ', '.join(str(x) for x in combinedTags))
     elif not restartLoops:
         printData()
         if firstRun:
