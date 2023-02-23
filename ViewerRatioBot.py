@@ -58,7 +58,46 @@ worthGames = 0
 dropsGames = []
 firstRun = True
 tags = []
-combinedTags = []
+combinedTags = [
+    [['a'], []],
+    [['b'], []],
+    [['c'], []],
+    [['d'], []],
+    [['e'], []],
+    [['f'], []],
+    [['g'], []],
+    [['h'], []],
+    [['i'], []],
+    [['j'], []],
+    [['k'], []],
+    [['l'], []],
+    [['m'], []],
+    [['n'], []],
+    [['o'], []],
+    [['p'], []],
+    [['q'], []],
+    [['r'], []],
+    [['s'], []],
+    [['t'], []],
+    [['u'], []],
+    [['v'], []],
+    [['w'], []],
+    [['x'], []],
+    [['y'], []],
+    [['z'], []],
+    [['1'], []],
+    [['2'], []],
+    [['3'], []],
+    [['4'], []],
+    [['5'], []],
+    [['6'], []],
+    [['7'], []],
+    [['8'], []],
+    [['9'], []],
+    [['0'], []],
+    [['Other'], []]
+]
+
 newBlacklistAdditions = []
 
 # Debug variable
@@ -99,7 +138,7 @@ f.writelines('\n')
 f.writelines('\n|   |**Favorite games**|')
 f.writelines('\n|---|------------------|')
 for g in range(len(favoriteGames)):
-    f.writelines('\n|**' + favoriteGames[g][0] + ':**|' + ', '.join(favoriteGames[g][1]) + '|')
+    f.writelines('\n|' + favoriteGames[g][0] + ':|' + ', '.join(favoriteGames[g][1]) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Whitelist:')
@@ -113,7 +152,7 @@ f.writelines('\n')
 f.writelines('\n|   |**Whitelisted games**|')
 f.writelines('\n|---|---------------------|')
 for w in range(len(wishlisted)):
-    f.writelines('\n|**' + wishlisted[w][0] + ':**|' + ', '.join(wishlisted[w][1]) + '|')
+    f.writelines('\n|' + wishlisted[w][0] + ':|' + ', '.join(wishlisted[w][1]) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Blacklist:')
@@ -130,7 +169,7 @@ for b in range(len(blacklist)):
     blacklistedGames = []
     for g in range(len(blacklist[b][1])):
         blacklistedGames.append(blacklist[b][1][g][0])
-    f.writelines('\n|**' + blacklist[b][0] + ':**|' + ', '.join(blacklistedGames) + '|')
+    f.writelines('\n|' + blacklist[b][0] + ':|' + ', '.join(blacklistedGames) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.close()
@@ -186,6 +225,7 @@ def getMoreStreams(i):
         global gameStreams
         global medianList
         global dropsGames
+        global combinedTags
         urlMore = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i] + "&after=" + pagination
         paramsMore = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
         r = requests.get(urlMore, headers=paramsMore).json()
@@ -207,18 +247,38 @@ def getMoreStreams(i):
                     for t in range(len(e['tags'])):
                         newTag = True
                         for w in range(len(whitelistedTags)):
-                            if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1]):
-                                newTag = False
+                            if w == (len(whitelistedTags) - 1):
+                                for p in range(len(whitelistedTags[w][1])):
+                                    if p == (len(whitelistedTags[w][1]) - 1):
+                                        if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1]):
+                                            newTag = False
+                                    elif e['tags'][t][0].lower() == whitelistedTags[w][1][p][0][0]:
+                                        if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1]):
+                                            newTag = False
+                                    if not newTag:
+                                        break
+                            else:
+                                if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1]):
+                                    newTag = False
                         if newTag:
                             for b in range(len(blacklistedTags)):
                                 if e['tags'][t].lower() in (tag.lower() for tag in blacklistedTags[b][1]):
                                     newTag = False
-                        if newTag and combinedTags:
-                            for c in range(len(combinedTags)):
-                                if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c]):
-                                    newTag = False
                         if newTag:
-                            combinedTags.append(e['tags'][t])
+                            for c in range(len(combinedTags)):
+                                if combinedTags[c][1]:
+                                    if c == (len(combinedTags) - 1):
+                                        if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1]):
+                                            newTag = False
+                                    elif e['tags'][t][0].lower() == combinedTags[c][0][0]:
+                                        if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1]):
+                                            newTag = False
+                                    if not newTag:
+                                        break
+                        if newTag:
+                            for m in range(len(combinedTags)):
+                                if e['tags'][t][0] == combinedTags[m][0][0]:
+                                    combinedTags[m][1].append(e['tags'][t])
                 if not hours > 18:
                     if not e['user_name'] in blacklistedStreams:
                         blacklisted = False
@@ -228,7 +288,7 @@ def getMoreStreams(i):
                                     if e['tags'][t] in blacklistedTags[b][1]:
                                         blacklisted = True
                                         break
-                                    if 'drops' in e['tags'][t]:
+                                    if 'drop' in e['tags'][t]:
                                         if not e['game_id'] in dropsGames:
                                             dropsGames.append(e['game_id'])
                                 if blacklisted:
@@ -506,8 +566,8 @@ def printStrings():
         newGamesReversed = newGames[:]
         newGamesReversed.reverse()
         print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
-    if combinedTags:
-        print("New tags are: " + ', '.join(str(x) for x in combinedTags))
+    # if combinedTags:
+    #     print("New tags are: " + ', '.join(str(x) for x in combinedTags))
 
     hostGamesLoopedPrintedReversed = hostGamesLoopedPrinted[:]
     hostGamesLoopedPrintedReversed.reverse()
@@ -696,7 +756,7 @@ while True:
                                 for b in range(len(blacklistedTags)):
                                     if not e['tags'] is None:
                                         for t in range(len(e['tags'])):
-                                            if 'drops' in e['tags'][t]:
+                                            if 'drop' in e['tags'][t]:
                                                 if not e['game_id'] in dropsGames:
                                                     dropsGames.append(e['game_id'])
                                             if e['tags'][t] in (tag.lower() for tag in blacklistedTags[b][1]):
@@ -1001,8 +1061,8 @@ while True:
                 newGamesReversed = newGames[:]
                 newGamesReversed.reverse()
                 print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
-            if combinedTags:
-                print("New tags are: " + ', '.join(str(x) for x in combinedTags))
+            # if combinedTags:
+            #     print("New tags are: " + ', '.join(str(x) for x in combinedTags))
     elif not restartLoops:
         printData()
         if firstRun:
