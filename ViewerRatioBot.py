@@ -58,51 +58,8 @@ worthGames = 0
 dropsGames = []
 firstRun = True
 tags = []
-combinedTags = [
-    [['a'], []],
-    [['b'], []],
-    [['c'], []],
-    [['d'], []],
-    [['e'], []],
-    [['f'], []],
-    [['g'], []],
-    [['h'], []],
-    [['i'], []],
-    [['j'], []],
-    [['k'], []],
-    [['l'], []],
-    [['m'], []],
-    [['n'], []],
-    [['o'], []],
-    [['p'], []],
-    [['q'], []],
-    [['r'], []],
-    [['s'], []],
-    [['t'], []],
-    [['u'], []],
-    [['v'], []],
-    [['w'], []],
-    [['x'], []],
-    [['y'], []],
-    [['z'], []],
-    [['1'], []],
-    [['2'], []],
-    [['3'], []],
-    [['4'], []],
-    [['5'], []],
-    [['6'], []],
-    [['7'], []],
-    [['8'], []],
-    [['9'], []],
-    [['0'], []],
-    [['Other'], []]
-]
 
 newBlacklistAdditions = []
-
-# Debug variable
-testing = False
-testGame = 'Minecraft'
 
 # Update blacklist readme file
 print('Updating black/whitelist')
@@ -249,14 +206,15 @@ def getMoreStreams(i):
                         for w in range(len(whitelistedTags)):
                             if w == (len(whitelistedTags) - 1):
                                 for p in range(len(whitelistedTags[w][1])):
-                                    if p == (len(whitelistedTags[w][1]) - 1):
-                                        if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1]):
-                                            newTag = False
-                                    elif e['tags'][t][0].lower() == whitelistedTags[w][1][p][0][0]:
-                                        if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1]):
-                                            newTag = False
-                                    if not newTag:
-                                        break
+                                    for v in range(len(whitelistedTags[w][1][p][1])):
+                                        if p == (len(whitelistedTags[w][1]) - 1):
+                                            if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1][v][1]):
+                                                newTag = False
+                                        elif e['tags'][t][0].lower() == whitelistedTags[w][1][p][0][0]:
+                                            if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1][p][1][v][1]):
+                                                newTag = False
+                                        if not newTag:
+                                            break
                             else:
                                 if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[w][1]):
                                     newTag = False
@@ -266,31 +224,39 @@ def getMoreStreams(i):
                                     newTag = False
                         if newTag:
                             for c in range(len(combinedTags)):
-                                if combinedTags[c][1]:
-                                    if c == (len(combinedTags) - 1):
-                                        if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1]):
-                                            newTag = False
-                                    elif e['tags'][t][0].lower() == combinedTags[c][0][0]:
-                                        if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1]):
-                                            newTag = False
-                                    if not newTag:
-                                        break
+                                for v in range(len(combinedTags[c][1])):
+                                    if combinedTags[c][1][v][1]:
+                                        if c == (len(combinedTags) - 1):
+                                            if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1][v][1]):
+                                                newTag = False
+                                        elif e['tags'][t][0].lower() == combinedTags[c][0][0]:
+                                            if e['tags'][t].lower() in (tag.lower() for tag in combinedTags[c][1][v][1]):
+                                                newTag = False
+                                        if not newTag:
+                                            break
                         if newTag:
+                            otherTag = True
                             for m in range(len(combinedTags)):
-                                if e['tags'][t][0] == combinedTags[m][0][0]:
-                                    combinedTags[m][1].append(e['tags'][t])
+                                if not m == (len(combinedTags) - 1):
+                                    if e['tags'][t][0].lower() == combinedTags[m][0][0]:
+                                        combinedTags[m][1][(len(e['tags'][t]) - 1)][1].append(e['tags'][t])
+                                        otherTag = False
+                            if otherTag:
+                                combinedTags[-1][1][(len(e['tags'][t]) - 1)][1].append(e['tags'][t])
                 if not hours > 18:
                     if not e['user_name'] in blacklistedStreams:
                         blacklisted = False
                         for b in range(len(blacklistedTags)):
                             if not e['tags'] is None:
                                 for t in range(len(e['tags'])):
-                                    if e['tags'][t] in blacklistedTags[b][1]:
-                                        blacklisted = True
-                                        break
-                                    if 'drop' in e['tags'][t]:
+                                    if 'drop' in e['tags'][t].lower():
                                         if not e['game_id'] in dropsGames:
                                             dropsGames.append(e['game_id'])
+                                    if e['tags'][t].lower() in (tag.lower() for tag in blacklistedTags[b][1]):
+                                        if testing and e['game_name'] == testGame:
+                                            print(e['game_name'] + ' stream has the blacklisted tag: ' + e['tags'][t])
+                                        blacklisted = True
+                                        break
                                 if blacklisted:
                                     break
                         for b in range(len(blacklistedTitles)):
@@ -301,9 +267,16 @@ def getMoreStreams(i):
                                         break
                             elif e['game_name'] == blacklistedTitles[b][0]:
                                 for t in range(len(blacklistedTitles[b][1])):
+                                    # if testing and e['game_name'] == testGame:
+                                    #     print(blacklistedTitles[b][1][t].lower())
+                                    #     print(e['title'].lower())
                                     if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                        if testing and e['game_name'] == testGame:
+                                            print(e['game_name'] + ' stream has the blacklisted title segmment: "' + blacklistedTitles[b][1][t] + '" in the title: ' + e['title'])
                                         blacklisted = True
                                         break
+                            if blacklisted:
+                                break
                         for b in range(len(blacklistedPartialStreams)):
                             if b == 0:
                                 if blacklistedPartialStreams[b][1][0]:
@@ -320,6 +293,8 @@ def getMoreStreams(i):
                                                  e['user_name'].lower()):
                                         blacklisted = True
                                         break
+                            if blacklisted:
+                                break
                         if not blacklisted:
                             gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
                             medianList[i].append(int(e['viewer_count']))
@@ -462,6 +437,14 @@ def printStrings():
     global totalViewersMedian
     global totalViewerRatioMedianRatio
     viewAmount = len(hostGamesLooped)
+    for i in range(len(combinedTags)):
+        lengthTags = []
+        for v in range(len(combinedTags[i][1])):
+            if combinedTags[i][1][v][1]:
+                for r in range(len(combinedTags[i][1][v][1])):
+                    lengthTags.append(combinedTags[i][1][v][1][r])
+        if lengthTags:
+            print("New tags with " + combinedTags[i][0] + " are: " + ', '.join(str(x) for x in lengthTags))
     for i in range(viewAmount):
         if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
             gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
@@ -488,7 +471,7 @@ def printStrings():
             if hostGamesLoopedPrinted[i - viewAmount] == 'Minecraft' or hostGamesLoopedPrinted[i - viewAmount] == 'Satisfactory':
                 if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                     print('\033[34m' + printString + '\033[0m')
-                elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
                     print('\033[32m' + printString + '\033[0m')
                 else:
                     print(printString)
@@ -543,7 +526,7 @@ def printStrings():
         if hostGamesLoopedPrinted[i - viewAmount] == 'Minecraft' or hostGamesLoopedPrinted[i - viewAmount] == 'Satisfactory':
             if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                 print('\033[34m' + printString + '\033[0m')
-            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
                 print('\033[32m' + printString + '\033[0m')
             else:
                 print(printString)
@@ -552,22 +535,20 @@ def printStrings():
                 if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                     if viewerRatioMedianRatioLoopedAverage >= 1000:
                         print('\033[34m' + printString + '\033[0m')
-                    elif 1000 > viewerRatioMedianRatioLoopedAverage > 300:
+                    elif 1000 > viewerRatioMedianRatioLoopedAverage > 100:
                         print('\033[32m' + printString + '\033[0m')
                     else:
                         print(printString)
                     break
             for w in range(len(favoriteGames)):
-                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and viewerRatioMedianRatioLoopedAverage > 300:
+                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and viewerRatioMedianRatioLoopedAverage > 100:
                     print('\033[33m' + printString + '\033[0m')
                     break
-    print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
+    print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching ' + str(totalStreams) + 's with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
     if newGames:
         newGamesReversed = newGames[:]
         newGamesReversed.reverse()
         print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
-    # if combinedTags:
-    #     print("New tags are: " + ', '.join(str(x) for x in combinedTags))
 
     hostGamesLoopedPrintedReversed = hostGamesLoopedPrinted[:]
     hostGamesLoopedPrintedReversed.reverse()
@@ -578,7 +559,17 @@ def printStrings():
     f.writelines("\n# output.py")
     f.writelines("\nhostGames = " + str(hostGamesLoopedPrintedReversed))
     f.writelines("\nnewGames = " + str(newGames))
-    f.writelines("\ncombinedTags = " + str(combinedTags))
+    f.writelines("\ncombinedTags = [\n")
+    for l in range(len(combinedTags)):
+        f.writelines("    ['" + combinedTags[l][0] + "', [\n")
+        for v in range(len(combinedTags[l][1])):
+            f.writelines("        ['" + combinedTags[l][1][v][0] + "', [")
+            if combinedTags[l][1][v][1]:
+                f.writelines("'" + "', '".join(combinedTags[l][1][v][1]) + "']],\n")
+            else:
+                f.writelines("]],\n")
+        f.writelines("    ]], \n")
+    f.writelines("]")
     f.writelines("\nnewBlacklistAdditionsOutput = " + str(newBlacklistAdditions))
     f.writelines("\n")
     f.close()
@@ -648,7 +639,7 @@ if not newGames == []:
 else:
     if testing:
         print("No new blacklist additions")
-        url = "https://api.twitch.tv/helix/games?name=KartRider"
+        url = "https://api.twitch.tv/helix/games?name=" + testGame
         params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
         r = requests.get(url, headers=params).json()
         print("Typical game data is: " + str(r))
@@ -697,6 +688,46 @@ while True:
 
         # Establish givens
         from output import *
+        if not combinedTags:
+            combinedTags = [
+                ['a', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['b', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['c', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['d', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['e', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['f', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['g', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['h', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['i', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['j', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['k', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['l', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['m', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['n', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['o', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['p', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['q', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['r', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['s', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['t', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['u', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['v', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['w', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['x', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['y', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['z', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['1', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['2', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['3', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['4', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['5', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['6', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['7', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['8', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['9', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['0', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]],
+                ['Other', [['1', []], ['2', []], ['3', []], ['4', []], ['5', []], ['6', []], ['7', []], ['8', []], ['9', []], ['10', []], ['11', []], ['12', []], ['13', []], ['14', []], ['15', []], ['16', []], ['17', []], ['18', []], ['19', []], ['20', []], ['21', []], ['22', []], ['23', []], ['24', []], ['25', []]]]
+            ]
 
         # Add games that were not included
         existingGame = False
@@ -751,15 +782,15 @@ while True:
                         if not hours > 18:
                             if not e['user_name'] in blacklistedStreams:
                                 blacklisted = False
-                                # if testing:
-                                #     print(e['tags'])
                                 for b in range(len(blacklistedTags)):
                                     if not e['tags'] is None:
                                         for t in range(len(e['tags'])):
-                                            if 'drop' in e['tags'][t]:
+                                            # if testing and e['game_name'] == testGame:
+                                            #     print(e['tags'][t])
+                                            if 'drop' in e['tags'][t].lower():
                                                 if not e['game_id'] in dropsGames:
                                                     dropsGames.append(e['game_id'])
-                                            if e['tags'][t] in (tag.lower() for tag in blacklistedTags[b][1]):
+                                            if e['tags'][t].lower() in (tag.lower() for tag in blacklistedTags[b][1]):
                                                 if testing and e['game_name'] == testGame:
                                                     print(e['game_name'] + ' stream has the blacklisted tag: ' + e['tags'][t])
                                                 blacklisted = True
@@ -775,6 +806,8 @@ while True:
                                     elif e['game_name'] == blacklistedTitles[b][0]:
                                         for t in range(len(blacklistedTitles[b][1])):
                                             if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                if testing and e['game_name'] == testGame:
+                                                    print(e['game_name'] + ' stream has the blacklisted title segment: "' + blacklistedTitles[b][1][t] + '" in the title: ' + e['title'])
                                                 blacklisted = True
                                                 break
                                 for b in range(len(blacklistedPartialStreams)):
@@ -789,7 +822,7 @@ while True:
                                             if len(blacklistedPartialStreams[b][1][t]) == 1:
                                                 if blacklistedPartialStreams[b][1][t][0].lower() == e['user_name'].lower():
                                                     if testing:
-                                                        if topGameNames[i] == 'Tibia':
+                                                        if topGameNames[i] == testGame:
                                                             print(e['user_name'])
                                                     blacklisted = True
                                                     break
@@ -977,6 +1010,14 @@ while True:
                     print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
 
         if firstRun:
+            for i in range(len(combinedTags)):
+                lengthTags = []
+                for v in range(len(combinedTags[i][1])):
+                    if combinedTags[i][1][v][1]:
+                        for r in range(len(combinedTags[i][1][v][1])):
+                            lengthTags.append(combinedTags[i][1][v][1][r])
+                if lengthTags:
+                    print("New tags with " + combinedTags[i][0] + " are: " + ', '.join(str(x) for x in lengthTags))
             for i in range(viewAmount):
                 if viewerRatioMedianRatioSorted[i - viewAmount] > 0:
                     if round(viewerRatioMedianRatioSorted[i - viewAmount]) > 30 and gameViewersMedian[i - viewAmount] > 7:
@@ -1027,7 +1068,7 @@ while True:
                     )
                     if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                         print('\033[34m' + printString + '\033[0m')
-                    elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                    elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
                         print('\033[32m' + printString + '\033[0m')
                     else:
                         print(printString)
@@ -1045,7 +1086,7 @@ while True:
                         if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                             if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                                 print('\033[34m' + printString + '\033[0m')
-                            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
                                 print('\033[32m' + printString + '\033[0m')
                             else:
                                 print(printString)
@@ -1053,7 +1094,7 @@ while True:
                             break
                     if not favoriteGame:
                         for w in range(len(wishlisted)):
-                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 300:
+                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
                                 print('\033[33m' + printString + '\033[0m')
                                 break
             print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
@@ -1061,8 +1102,6 @@ while True:
                 newGamesReversed = newGames[:]
                 newGamesReversed.reverse()
                 print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
-            # if combinedTags:
-            #     print("New tags are: " + ', '.join(str(x) for x in combinedTags))
     elif not restartLoops:
         printData()
         if firstRun:
