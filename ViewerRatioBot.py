@@ -921,6 +921,7 @@ while True:
         print("After drop removal")
         print(len(topGameNames), topGameNames)
         print(len(gameViewers), gameViewers)
+        print(len(gameViewers), gameViewers)
         print(len(topGameIds), topGameIds)
         if testing:
             for i in range(len(topGameIds)):
