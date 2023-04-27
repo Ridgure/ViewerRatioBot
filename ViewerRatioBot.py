@@ -548,7 +548,19 @@ def printStrings():
     if newGames:
         newGamesReversed = newGames[:]
         newGamesReversed.reverse()
-        print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
+        newGamesPrintList = []
+        if len(newGamesReversed) == 1:
+            print("The newest game is: " + newGamesReversed[0])
+        else:
+            print("The new games are:")
+            for i, a in enumerate(newGamesReversed):
+                newGamesPrintList.append(a)
+                if i % 10 == 9:
+                    print((i - 8), "-", (i + 1), newGamesPrintList)
+                    newGamesPrintList = []
+            if not (len(newGamesReversed) % 10) == 0:
+                print((len(newGamesReversed) - (len(newGamesReversed) % 10) + 1), "-",
+                      len(newGamesReversed), ", ".join(newGamesPrintList))
 
     hostGamesLoopedPrintedReversed = hostGamesLoopedPrinted[:]
     hostGamesLoopedPrintedReversed.reverse()
@@ -635,7 +647,17 @@ if not newGames == []:
                     raise
                 quit()
     if newBlacklistAdditions:
-        print("New blacklist additions are: " + str(newBlacklistAdditions))
+        if len(newBlacklistAdditions) == 1:
+            print("The newest game is:", newBlacklistAdditions[0])
+        else:
+            newBlacklistPrintList = []
+            for i, a in enumerate(newBlacklistAdditions):
+                newBlacklistPrintList.append(a)
+                if i % 5 == 4:
+                    print((i - 3), "-", (i + 1), newBlacklistPrintList)
+                    newBlacklistPrintList = []
+            if not (len(newBlacklistAdditions) % 5) == 0:
+                print((len(newBlacklistAdditions) - (len(newBlacklistAdditions) % 5) + 1), "-", len(newBlacklistAdditions), newBlacklistPrintList)
 else:
     if testing:
         print("No new blacklist additions")
@@ -753,6 +775,9 @@ while True:
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
                 params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
                 r = requests.get(url, headers=params).json()
+                # if testing:
+                #     print(topGameIds[i])
+                #     print(r)
                 gameStreams.append("0")
                 gameViewers.append("0")
                 medianList.append([])
@@ -768,6 +793,7 @@ while True:
                         # print('Getting first streams')
                         # print(r)
                     gameStreams[i] = str(int(gameStreams[i]) + len(r['data']))
+                    testingTags = []
                     for e in r['data']:
                         # Print streams in testgame
                         # if testing:
@@ -785,8 +811,6 @@ while True:
                                 for b in range(len(blacklistedTags)):
                                     if not e['tags'] is None:
                                         for t in range(len(e['tags'])):
-                                            # if testing and e['game_name'] == testGame:
-                                            #     print(e['tags'][t])
                                             if 'drop' in e['tags'][t].lower():
                                                 if not e['game_id'] in dropsGames:
                                                     dropsGames.append(e['game_id'])
@@ -795,6 +819,21 @@ while True:
                                                     print(e['game_name'] + ' stream has the blacklisted tag: ' + e['tags'][t])
                                                 blacklisted = True
                                                 break
+                                            # Check what tags the test game has
+                                            if testing and e['game_name'] == testGame and not blacklisted:
+                                                whitelistedTag = False
+                                                for c in range(len(whitelistedTags[0:-2])):
+                                                    if e['tags'][t].lower() in (tag.lower() for tag in whitelistedTags[c][1]):
+                                                        whitelistedTag = True
+                                                        break
+                                                if not whitelistedTag:
+                                                    existingTag = False
+                                                    for f in range(len(testingTags)):
+                                                        if e['tags'][t].lower() == testingTags[f].lower():
+                                                            existingTag = True
+                                                            break
+                                                    if not existingTag:
+                                                        testingTags.append(e['tags'][t])
                                     if blacklisted:
                                         break
                                 for b in range(len(blacklistedTitles)):
@@ -838,6 +877,9 @@ while True:
                                     if testing:
                                         if e['game_name'].lower() == testGame:
                                             print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
+                    if r['data']:
+                        if testing and r['data'][0]['game_name'] == testGame:
+                            print("Tags for " + testGame + " are:", testingTags)
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
                 if testing and topGameNames[i] == testGame:
@@ -1102,7 +1144,19 @@ while True:
             if newGames:
                 newGamesReversed = newGames[:]
                 newGamesReversed.reverse()
-                print("The new games are: " + ', '.join(str(x) for x in newGamesReversed))
+                newGamesPrintList = []
+                if len(newGamesReversed) == 1:
+                    print("The newest game is: " + newGamesReversed[0])
+                else:
+                    print("The new games are:")
+                    for i, a in enumerate(newGamesReversed):
+                        newGamesPrintList.append(a)
+                        if i % 10 == 9:
+                            print((i - 8), "-", (i + 1), newGamesPrintList)
+                            newGamesPrintList = []
+                    if not (len(newGamesReversed) % 10) == 0:
+                        print((len(newGamesReversed) - (len(newGamesReversed) % 10) + 1), "-",
+                              len(newGamesReversed), ", ".join(newGamesPrintList))
     elif not restartLoops:
         printData()
         if firstRun:
