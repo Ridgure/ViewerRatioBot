@@ -171,8 +171,8 @@ def getMoreGames():
     topGameViewers = 0
     if stopGettingGames < 3:
         getMoreGames()
-    elif testing:
-        print("Raw streamed games are: " + str(len(topGameIds)) + " " + str(topGameNames))
+    # elif testing:
+    #     print("Raw streamed games are: " + str(len(topGameIds)) + " " + str(topGameNames))
 
 
 def getMoreStreams(i):
@@ -332,12 +332,12 @@ def printData():
     global viewerRatioMedianRatioLoopedPrinted
     global viewerRatioMedianRatioLoopedSorted
     global minStreams
-    if testing:
-        print("Before math has been done")
-        print(len(topGameNames), topGameNames)
-        print(len(topGameIds), topGameIds)
-        print(len(hostGamesLooped), hostGamesLooped)
-        print(len(topGameIdsLooped), topGameIdsLooped)
+    # if testing:
+    #     print("Before math has been done")
+    #     print(len(topGameNames), topGameNames)
+    #     print(len(topGameIds), topGameIds)
+    #     print(len(hostGamesLooped), hostGamesLooped)
+    #     print(len(topGameIdsLooped), topGameIdsLooped)
     testExist = 0
     testNonExist = 0
     for i in range(len(topGameNames)):
@@ -388,13 +388,13 @@ def printData():
             viewerRatioMedianRatioLooped.append(gameViewerRatioLooped[-1] * gameViewersMedianLooped[-1])
             hostGamesLooped.append(topGameNames[i])
             testNonExist = testNonExist + 1
-    if testing:
-        print("After math has been done")
-        print(testExist, testNonExist)
-        print(len(topGameNames), topGameNames)
-        print(len(topGameIds), topGameIds)
-        print(len(hostGamesLooped), hostGamesLooped)
-        print(len(topGameIdsLooped), topGameIdsLooped)
+    # if testing:
+    #     print("After math has been done")
+    #     print(testExist, testNonExist)
+    #     print(len(topGameNames), topGameNames)
+    #     print(len(topGameIds), topGameIds)
+    #     print(len(hostGamesLooped), hostGamesLooped)
+    #     print(len(topGameIdsLooped), topGameIdsLooped)
 
 
     dummy = []
@@ -754,11 +754,11 @@ while True:
         # Add games that were not included
         existingGame = False
         if loops > 0:
-            if testing:
-                print("The new top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
-                print("The old top game names are: " + str(len(hostGamesLooped)) + " " + str(hostGamesLooped))
-                print("The new top game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
-                print("The old top game ids are: " + str(len(topGameIdsLooped)) + " " + str(topGameIdsLooped))
+            # if testing:
+            #     print("The new top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
+            #     print("The old top game names are: " + str(len(hostGamesLooped)) + " " + str(hostGamesLooped))
+            #     print("The new top game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
+            #     print("The old top game ids are: " + str(len(topGameIdsLooped)) + " " + str(topGameIdsLooped))
             for i in range(len(topGameIdsLooped)):
                 for t in range(len(topGameIds)):
                     if topGameIdsLooped[i] == topGameIds[t]:
@@ -767,9 +767,9 @@ while True:
                     topGameIds.append(topGameIdsLooped[i])
                     topGameNames.append(hostGamesLooped[i])
 
-        if testing:
-            print("The added game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
-            print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
+        # if testing:
+        #     print("The added game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
+        #     print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
         try:
             for i in range(len(topGameIds)):
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
@@ -796,10 +796,7 @@ while True:
                     testingTags = []
                     for e in r['data']:
                         # Print streams in testgame
-                        # if testing:
-                            # if e['game_name'] == testGame:
-                            #     print(e)
-                            # print('Getting first stream')
+                        # print('Getting first stream')
                         startedAt = e['started_at']
                         year, month, day, hour, minute, second = int(startedAt[0:4]), int(startedAt[5:7]), int(startedAt[8:10]), int(startedAt[11:13]), int(startedAt[14:16]), int(startedAt[17:19])
                         startedAt = datetime.datetime(year, month, day, hour, minute, second)
@@ -836,10 +833,13 @@ while True:
                                                         testingTags.append(e['tags'][t])
                                     if blacklisted:
                                         break
+                                # Check what title the game has
                                 for b in range(len(blacklistedTitles)):
                                     if b == 0:
                                         for t in range(len(blacklistedTitles[b][1])):
                                             if re.search(blacklistedTitles[b][1][t].lower(), e['title'].lower()):
+                                                if testing and e['game_name'] == testGame:
+                                                    print(e['game_name'] + ' stream has the blacklisted title segment: "' + blacklistedTitles[b][1][t] + '" in the title: ' + e['title'])
                                                 blacklisted = True
                                                 break
                                     elif e['game_name'] == blacklistedTitles[b][0]:
@@ -874,12 +874,14 @@ while True:
                                 if not blacklisted:
                                     gameViewers[i] = str(int(gameViewers[i]) + int(e['viewer_count']))
                                     medianList[i].append(int(e['viewer_count']))
-                                    if testing:
-                                        if e['game_name'].lower() == testGame:
-                                            print(e['game_name'] + " streamer " + e['user_name'].lower() + " has " + str(e['viewer_count']) + " viewers for a total of " + str(gameViewers[i]) + " viewers so far")
+                                    if testing and e['game_name'].lower() == testGame.lower() and e['viewer_count'] > 4:
+                                        print(e['game_name'] + " streamer " + e['user_name'] + " has " + str(e['viewer_count']) + " viewers with the title " + e['title'] + " and the tags " + ", ".join(e['tags']))
                     if r['data']:
                         if testing and r['data'][0]['game_name'] == testGame:
-                            print("Tags for " + testGame + " are:", testingTags)
+                            if testingTags:
+                                print("Tags for " + testGame + " are:", testingTags)
+                            else:
+                                print("No new tags for " + testGame)
                     pagination = r['pagination']['cursor']
                     getMoreStreams(i)
                 if testing and topGameNames[i] == testGame:
@@ -933,9 +935,9 @@ while True:
 
     if testing:
         print("Before drop removal")
-        print(len(topGameNames), topGameNames)
-        print(len(gameViewers), gameViewers)
-        print(len(topGameIds), topGameIds)
+        # print(len(topGameNames), topGameNames)
+        # print(len(gameViewers), gameViewers)
+        # print(len(topGameIds), topGameIds)
         for g in range(len(topGameIds)):
             if topGameNames[g] == 'Minecraft':
                 print(topGameNames[g] + " has: " + str(gameViewers[g]) + " viewers")
@@ -961,10 +963,10 @@ while True:
 
     if testing:
         print("After drop removal")
-        print(len(topGameNames), topGameNames)
-        print(len(gameViewers), gameViewers)
-        print(len(gameViewers), gameViewers)
-        print(len(topGameIds), topGameIds)
+        # print(len(topGameNames), topGameNames)
+        # print(len(gameViewers), gameViewers)
+        # print(len(gameViewers), gameViewers)
+        # print(len(topGameIds), topGameIds)
         if testing:
             for i in range(len(topGameIds)):
                 if topGameNames[i] == 'Minecraft':
@@ -1025,10 +1027,10 @@ while True:
                 if topGameNames[i] == testGame:
                     print(topGameNames[i] + " has: " + str(gameViewers[i]) + " viewers")
 
-        if testing:
-            print(topGameNames)
-            print(gameViewers)
-            print(gameStreams)
+        # if testing:
+        #     print(topGameNames)
+        #     print(gameViewers)
+        #     print(gameStreams)
 
         # Sort by all lists by viewerRatioMedianRatio
         dummy = []
@@ -1038,11 +1040,11 @@ while True:
         dummy[:], gameViewerRatio[:] = zip(*sorted(zip(viewerRatioMedianRatio, gameViewerRatio), key=lambda p: (p[0], p[1])))
         dummy[:], gameViewersMedian[:] = zip(*sorted(zip(viewerRatioMedianRatio, gameViewersMedian), key=lambda p: (p[0], p[1])))
         viewerRatioMedianRatioSorted[:] = sorted(viewerRatioMedianRatioSorted)
-        if testing:
-            print(topGameNames)
-            print(gameViewers)
-            print(gameStreams)
-            print(viewerRatioMedianRatio)
+        # if testing:
+        #     print(topGameNames)
+        #     print(gameViewers)
+        #     print(gameStreams)
+        #     print(viewerRatioMedianRatio)
 
         if testing:
             print("After sorting")
