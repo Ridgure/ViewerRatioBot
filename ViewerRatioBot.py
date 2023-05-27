@@ -95,7 +95,15 @@ f.writelines('\n')
 f.writelines('\n|   |**Favorite games**|')
 f.writelines('\n|---|------------------|')
 for g in range(len(favoriteGames)):
-    f.writelines('\n|' + favoriteGames[g][0] + ':|' + ', '.join(favoriteGames[g][1]) + '|')
+    if type(favoriteGames[g][1][0][1]) == str:
+        f.writelines('\n|**' + favoriteGames[g][0] + '**|' + ', '.join(favoriteGames[g][1]) + '|')
+    else:
+        subCategories = []
+        for m in range(len(favoriteGames[g][1])):
+            subCategories.append(favoriteGames[g][1][m][0])
+        f.writelines('\n|**' + favoriteGames[g][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        for m in range(len(favoriteGames[g][1])):
+            f.writelines('\n|**' + favoriteGames[g][0] + '** - ' + favoriteGames[g][1][m][0] + ':|' + ', '.join(favoriteGames[g][1][m][1]) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Whitelist:')
@@ -109,7 +117,15 @@ f.writelines('\n')
 f.writelines('\n|   |**Whitelisted games**|')
 f.writelines('\n|---|---------------------|')
 for w in range(len(wishlisted)):
-    f.writelines('\n|' + wishlisted[w][0] + ':|' + ', '.join(wishlisted[w][1]) + '|')
+    if type(wishlisted[w][1][0][1]) == str:
+        f.writelines('\n|**' + wishlisted[w][0] + '**|' + ', '.join(wishlisted[w][1]) + '|')
+    else:
+        subCategories = []
+        for m in range(len(wishlisted[w][1])):
+            subCategories.append(wishlisted[w][1][m][0])
+        f.writelines('\n|**' + wishlisted[w][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        for m in range(len(wishlisted[w][1])):
+            f.writelines('\n|**' + wishlisted[w][0] + '** - ' + wishlisted[w][1][m][0] + '|' + ', '.join(wishlisted[w][1][m][1]) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.writelines('\n## Blacklist:')
@@ -124,9 +140,19 @@ f.writelines('\n|   |**Blacklisted games**|')
 f.writelines('\n|---|---------------------|')
 for b in range(len(blacklist)):
     blacklistedGames = []
-    for g in range(len(blacklist[b][1])):
-        blacklistedGames.append(blacklist[b][1][g][0])
-    f.writelines('\n|' + blacklist[b][0] + ':|' + ', '.join(blacklistedGames) + '|')
+    if type(blacklist[b][1][0][1]) == str:
+        for g in range(len(blacklist[b][1])):
+            blacklistedGames.append(blacklist[b][1][g][0])
+        f.writelines('\n|**' + blacklist[b][0] + '**|' + ', '.join(blacklistedGames) + '|')
+    else:
+        subCategories = []
+        for m in range(len(blacklist[b][1])):
+            subCategories.append(blacklist[b][1][m][0])
+        f.writelines('\n|**' + blacklist[b][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        for m in range(len(blacklist[b][1])):
+            for g in range(len(blacklist[b][1][m][1])):
+                blacklistedGames.append(blacklist[b][1][m][1][g][0])
+            f.writelines('\n|**' + blacklist[b][0] + '** - ' + blacklist[b][1][m][0] + '|' + ', '.join(blacklistedGames) + '|')
 f.writelines('\n')
 f.writelines('\n<a href="#white-black-list">Back to top</a>')
 f.close()
@@ -481,22 +507,46 @@ def printStrings():
                 favoriteGame = False
                 wishlistedGame = False
                 for f in range(len(favoriteGames)):
-                    if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
-                        if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
-                            print('\033[34m' + printString + '\033[0m')  # Blue
-                        else:
-                            print('\033[32m' + printString + '\033[0m')  # Green
-                        favoriteGame = True
-                        break
-                if not favoriteGame:
-                    for w in range(len(wishlisted)):
-                        if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
+                    if type(favoriteGames[f][1][0][1]) == str:
+                        if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
                             if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
                                 print('\033[34m' + printString + '\033[0m')  # Blue
                             else:
-                                print('\033[33m' + printString + '\033[0m')  # Yellow
-                            wishlistedGame = True
+                                print('\033[32m' + printString + '\033[0m')  # Green
+                            favoriteGame = True
                             break
+                    else:
+                        for m in range(len(favoriteGames[f][1])):
+                            if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1][m][1]):
+                                if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                    print('\033[34m' + printString + '\033[0m')  # Blue
+                                else:
+                                    print('\033[32m' + printString + '\033[0m')  # Green
+                                favoriteGame = True
+                                break
+                if not favoriteGame:
+                    for w in range(len(wishlisted)):
+                        if type(wishlisted[w][1][0][1]) == str:
+                            if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
+                                if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                    print('\033[34m' + printString + '\033[0m')  # Blue
+                                else:
+                                    print('\033[33m' + printString + '\033[0m')  # Yellow
+                                wishlistedGame = True
+                                break
+                        else:
+                            wishlistedGameBreaker = False
+                            for m in range(len(wishlisted[w][1])):
+                                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1][m][1]):
+                                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                        print('\033[34m' + printString + '\033[0m')  # Blue
+                                    else:
+                                        print('\033[33m' + printString + '\033[0m')  # Yellow
+                                    wishlistedGame = True
+                                    wishlistedGameBreaker = True
+                                    break
+                            if wishlistedGameBreaker:
+                                break
                 if not favoriteGame and not wishlistedGame:
                     newGameLooped = True
                     for y in range(len(newGames)):
@@ -532,18 +582,43 @@ def printStrings():
                 print(printString)
         elif viewerRatioMedianRatioLoopedAverage > 0:
             for f in range(len(favoriteGames)):
-                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
-                    if viewerRatioMedianRatioLoopedAverage >= 1000:
-                        print('\033[34m' + printString + '\033[0m')
-                    elif 1000 > viewerRatioMedianRatioLoopedAverage > 100:
-                        print('\033[32m' + printString + '\033[0m')
-                    else:
-                        print(printString)
-                    break
-            for w in range(len(favoriteGames)):
-                if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and viewerRatioMedianRatioLoopedAverage > 100:
-                    print('\033[33m' + printString + '\033[0m')
-                    break
+                if type(favoriteGames[f][1][0][1]) == str:
+                    if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
+                        if viewerRatioMedianRatioLoopedAverage >= 1000:
+                            print('\033[34m' + printString + '\033[0m')
+                        elif 1000 > viewerRatioMedianRatioLoopedAverage > 100:
+                            print('\033[32m' + printString + '\033[0m')
+                        else:
+                            print(printString)
+                        break
+                else:
+                    favoriteGameBreaker = False
+                    for m in range(len(favoriteGames[f][1])):
+                        if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1][m][1]):
+                            if viewerRatioMedianRatioLoopedAverage >= 1000:
+                                print('\033[34m' + printString + '\033[0m')
+                            elif 1000 > viewerRatioMedianRatioLoopedAverage > 100:
+                                print('\033[32m' + printString + '\033[0m')
+                            else:
+                                print(printString)
+                            favoriteGameBreaker = True
+                            break
+                    if favoriteGameBreaker:
+                        break
+            for w in range(len(wishlisted)):
+                if type(wishlisted[w][1][0][1]) == str:
+                    if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and viewerRatioMedianRatioLoopedAverage > 100:
+                        print('\033[33m' + printString + '\033[0m')
+                        break
+                else:
+                    wishlistedGameBreaker = False
+                    for m in range(len(wishlisted[w][1])):
+                        if hostGamesLoopedPrinted[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1][m][1]) and viewerRatioMedianRatioLoopedAverage > 100:
+                            print('\033[33m' + printString + '\033[0m')
+                            wishlistedGameBreaker = True
+                            break
+                    if wishlistedGameBreaker:
+                        break
     print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching ' + str(totalStreams) + 's with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
     if newGames:
         newGamesReversed = newGames[:]
@@ -603,11 +678,23 @@ if not newGames == []:
         favoriteGameAmount = 0
         wishlistedGameAmount = 0
         for b in range(len(blacklist)):
-            blacklistedGameAmount = blacklistedGameAmount + len(blacklist[b][1])
+            if type(blacklist[b][1][0][1]) == str:
+                blacklistedGameAmount = blacklistedGameAmount + len(blacklist[b][1])
+            else:
+                for g in range(len(blacklist[b][1])):
+                    blacklistedGameAmount = blacklistedGameAmount + len(blacklist[b][1][g][1])
         for f in range(len(favoriteGames)):
-            favoriteGameAmount = favoriteGameAmount + len(favoriteGames[f][1])
+            if type(favoriteGames[f][1][0][1]) == str:
+                favoriteGameAmount = favoriteGameAmount + len(favoriteGames[f][1])
+            else:
+                for g in range(len(favoriteGames[f][1])):
+                    favoriteGameAmount = favoriteGameAmount + len(favoriteGames[f][1][g][1])
         for w in range(len(wishlisted)):
-            wishlistedGameAmount = wishlistedGameAmount + len(wishlisted[w][1])
+            if type(wishlisted[f][1][0][1]) == str:
+                wishlistedGameAmount = wishlistedGameAmount + len(wishlisted[w][1])
+            else:
+                for g in range(len(wishlisted[w][1])):
+                    wishlistedGameAmount = wishlistedGameAmount + len(wishlisted[w][1][g][1])
         print("Getting blacklist game ids. " + str(blacklistedGameAmount) + " games blacklisted, " + str(favoriteGameAmount) + " favorite games and " + str(wishlistedGameAmount) + " games wishlisted for a total of " + str(blacklistedGameAmount + favoriteGameAmount + wishlistedGameAmount) + " games analyzed")
     for i in range(len(newGames)):
         if "+" in newGames[i]:
@@ -695,9 +782,13 @@ while True:
         # Extract id from blacklist
         blacklistIds = []
         for i in range(len(blacklist)):
-            for a in range(len(blacklist[i][1])):
-                blacklistIds.append(blacklist[i][1][a][1])
-
+            if type(blacklist[i][1][0][1]) == str:
+                for a in range(len(blacklist[i][1])):
+                    blacklistIds.append(blacklist[i][1][a][1])
+            else:
+                for g in range(len(blacklist[i][1])):
+                    for a in range(len(blacklist[i][1][g][1])):
+                        blacklistIds.append(blacklist[i][1][g][1][a][1])
         # Remove blacklisted games
         topGameIdsTemp = []
         topGameNamesTemp = []
@@ -1082,16 +1173,38 @@ while True:
                     favoriteGame = False
                     wishlistedGame = False
                     for f in range(len(favoriteGames)):
-                        if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
-                            print('\033[32m' + printString + '\033[0m')
-                            favoriteGame = True
-                            break
+                        if type(favoriteGames[f][1][0][1]) == str:
+                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
+                                print('\033[32m' + printString + '\033[0m')
+                                favoriteGame = True
+                                break
+                        else:
+                            favoriteGameBreaker = False
+                            for g in range(len(favoriteGames[f][1])):
+                                if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1][g][1]):
+                                    print('\033[32m' + printString + '\033[0m')
+                                    favoriteGame = True
+                                    favoriteGameBreaker = True
+                                    break
+                            if favoriteGameBreaker:
+                                break
                     if not favoriteGame:
                         for w in range(len(wishlisted)):
-                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
-                                print('\033[33m' + printString + '\033[0m')
-                                wishlistedGame = True
-                                break
+                            if type(wishlisted[w][1][0][1]) == str:
+                                if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]):
+                                    print('\033[33m' + printString + '\033[0m')
+                                    wishlistedGame = True
+                                    break
+                            else:
+                                wishlistedGameBreaker = False
+                                for g in range(len(wishlisted[w][1])):
+                                    if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1][g][1]):
+                                        print('\033[33m' + printString + '\033[0m')
+                                        wishlistedGame = True
+                                        wishlistedGameBreaker = True
+                                        break
+                                if wishlistedGameBreaker:
+                                    break
                     if not favoriteGame and not wishlistedGame:
                         newGame = True
                         for n in range(len(newGames)):
@@ -1128,20 +1241,46 @@ while True:
                     )
                     favoriteGame = False
                     for f in range(len(favoriteGames)):
-                        if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
-                            if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
-                                print('\033[34m' + printString + '\033[0m')
-                            elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
-                                print('\033[32m' + printString + '\033[0m')
-                            else:
-                                print(printString)
-                            favoriteGame = True
-                            break
+                        if type(favoriteGames[f][1][0][1]) == str:
+                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1]):
+                                if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                    print('\033[34m' + printString + '\033[0m')
+                                elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
+                                    print('\033[32m' + printString + '\033[0m')
+                                else:
+                                    print(printString)
+                                favoriteGame = True
+                                break
+                        else:
+                            favoriteGameBreaker = False
+                            for m in range(len(favoriteGames[f][1])):
+                                if topGameNames[i - viewAmount].lower() in (game.lower() for game in favoriteGames[f][1][m][1]):
+                                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) >= 1000:
+                                        print('\033[34m' + printString + '\033[0m')
+                                    elif 1000 > round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
+                                        print('\033[32m' + printString + '\033[0m')
+                                    else:
+                                        print(printString)
+                                    favoriteGame = True
+                                    favoriteGameBreaker = True
+                                    break
+                            if favoriteGameBreaker:
+                                break
                     if not favoriteGame:
                         for w in range(len(wishlisted)):
-                            if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
-                                print('\033[33m' + printString + '\033[0m')
-                                break
+                            if type(wishlisted[w][1][0][1]) == str:
+                                if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
+                                    print('\033[33m' + printString + '\033[0m')
+                                    break
+                            else:
+                                wishlistedGameBreaker = False
+                                for m in range(len(wishlisted[w][1])):
+                                    if topGameNames[i - viewAmount].lower() in (game.lower() for game in wishlisted[w][1][m][1]) and round(viewerRatioMedianRatioSorted[i - viewAmount]) > 100:
+                                        print('\033[33m' + printString + '\033[0m')
+                                        wishlistedGameBreaker = True
+                                        break
+                                if wishlistedGameBreaker:
+                                    break
             print(str(totalGames) + 'g have ' + str(totalViewers) + 'v watching s ' + str(totalStreams) + ' with an avgvrat of: ' + str(round(totalViewerRatio / totalGames, 2)) + ", the s at " + str(casterPercentage) + "% of the cat has an avg of " + str(round(totalViewersMedian / totalGames)) + "v and an avgvmrat of: " + str(round(totalViewerRatioMedianRatio / totalGames)))
             if newGames:
                 newGamesReversed = newGames[:]
