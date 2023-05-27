@@ -108,7 +108,7 @@ for g in range(len(favoriteGames)):
         for m in range(len(favoriteGames[g][1])):
             subCategories.append(favoriteGames[g][1][m][0])
         f.writelines('\n')
-        f.writelines('\n|**' + favoriteGames[g][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        f.writelines('\n|**' + favoriteGames[g][0] + '**|_' + ', '.join(subCategories) + '_|')
         f.writelines('\n|----------------|-----------------------------------------------------------------------|')
         for m in range(len(favoriteGames[g][1])):
             f.writelines('\n|**' + favoriteGames[g][0] + '** - ' + favoriteGames[g][1][m][0] + ':|' + ', '.join(favoriteGames[g][1][m][1]) + '|')
@@ -127,7 +127,7 @@ singularCategories = False
 for w in range(len(wishlisted)):
     if type(wishlisted[w][1][0][1]) == str:
         if not singularCategories:
-            f.writelines('\n|   |**Wishlisted games**|')
+            f.writelines('\n|   |**Whitelisted games**|')
             f.writelines('\n|---|---------------------|')
         singularCategories = True
         f.writelines('\n|**' + wishlisted[w][0] + '**|' + ', '.join(wishlisted[w][1]) + '|')
@@ -139,7 +139,7 @@ for w in range(len(wishlisted)):
         for m in range(len(wishlisted[w][1])):
             subCategories.append(wishlisted[w][1][m][0])
         f.writelines('\n')
-        f.writelines('\n|**' + wishlisted[w][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        f.writelines('\n|**' + wishlisted[w][0] + '**|_' + ', '.join(subCategories) + '_|')
         f.writelines('\n|---|---------------------|')
         for m in range(len(wishlisted[w][1])):
             f.writelines('\n|**' + wishlisted[w][0] + '** - ' + wishlisted[w][1][m][0] + '|' + ', '.join(wishlisted[w][1][m][1]) + '|')
@@ -172,9 +172,10 @@ for b in range(len(blacklist)):
         subCategories = []
         for m in range(len(blacklist[b][1])):
             subCategories.append(blacklist[b][1][m][0])
-        f.writelines('\n|**' + blacklist[b][0] + '** - Categories|_' + ', '.join(subCategories) + '_|')
+        f.writelines('\n|**' + blacklist[b][0] + '**|_' + ', '.join(subCategories) + '_|')
         f.writelines('\n|---|---------------------|')
         for m in range(len(blacklist[b][1])):
+            blacklistedGames = []
             for g in range(len(blacklist[b][1][m][1])):
                 blacklistedGames.append(blacklist[b][1][m][1][g][0])
             f.writelines('\n|**' + blacklist[b][0] + '** - ' + blacklist[b][1][m][0] + '|' + ', '.join(blacklistedGames) + '|')
