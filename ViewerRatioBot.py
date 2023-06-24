@@ -236,7 +236,7 @@ def getMoreStreams(i):
         global medianList
         global dropsGames
         global combinedTags
-        urlMore = "https://api.twitch.tv/helix/streams?first=100&game_id=" + topGameIds[i] + "&after=" + pagination
+        urlMore = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i] + "&after=" + pagination
         paramsMore = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
         r = requests.get(urlMore, headers=paramsMore).json()
         if not r['pagination'] == {}:
@@ -887,7 +887,7 @@ while True:
         #     print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
         try:
             for i in range(len(topGameIds)):
-                url = "https://api.twitch.tv/helix/streams?first=100&game_id=" + topGameIds[i]
+                url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
                 params = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
                 r = requests.get(url, headers=params).json()
                 # if testing and r['data'][0]['game_name'].lower() == testGame.lower():
