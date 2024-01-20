@@ -23,17 +23,19 @@
 
 **Automated functions:**
 
-| Done by the bot automatically:                                            |
-|---------------------------------------------------------------------------|
-| Checks all the streamed games on Twitch                                   |
-| Checks all the streams for those games with the language English or other |
-| Checks all the tags for those streams                                     |
-| Black/whitelist of streams                                                |
-| Black/whitelist of titles for all games or per game                       |
-| Black/whitelist of tags                                                   |
-| Filters out categories with drops                                         |
-| Filters out streams longer than 18 hours                                  |
-| Averages out the data over the course of a specified amount of time       |
+| Done by the bot automatically:                                               |
+|------------------------------------------------------------------------------|
+| Checks all the streamed games on Twitch                                      |
+| Checks all the streams for those games with the language English or other    |
+| Checks all the tags for those streams                                        |
+| Black/whitelist of streams                                                   |
+| Black/whitelist of titles for all games or per game                          |
+| Black/whitelist of tags                                                      |
+| Filters out categories with drops                                            |
+| Filters out streams longer than 18 hours                                     |
+| Averages out the data over the course of a specified amount of time          |
+| Saves the data of the last 5 weekdays to a file depending on the time of day |
+| Saves the data of the last 2 weekends to a file                              |
 
 ## Getting started
 
@@ -117,6 +119,7 @@ See the bot in action when I am live on [Twitch](https://twitch.tv/ridgure) over
 **Social media**
 
 Please follow me on:
+[Twitch](https://twitch.tv/ridgure),
 [Facebook](https://www.Facebook.com/ridgure), 
 [Twitter](https://www.Twitter.com/ridgure) and
 [Instagram](https://www.Instagram.com/rigidstructure)

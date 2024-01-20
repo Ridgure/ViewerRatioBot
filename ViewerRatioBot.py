@@ -3,6 +3,8 @@
 # ViewerRatioBot.py
 
 import datetime
+import statistics
+import time
 import math
 import os
 
@@ -212,11 +214,18 @@ def getMoreGames():
     urlMoreGames = "https://api.twitch.tv/helix/games/top?first=100" + "&after=" + paginationTopGames
     paramsMoreGames = {"Client-ID": "" + ClientID + "", "Authorization": "Bearer " + FollowerToken}
     r = requests.get(urlMoreGames, headers=paramsMoreGames).json()
+    if testing:
+        print(r['data'])
     if not r['pagination'] == {}:
         paginationTopGames = r['pagination']['cursor']
         for i in r['data']:
-            topGameIds.append(i['id'])
-            topGameNames.append(i['name'])
+            duplicateGame = False
+            for topGame in range(len(topGameNames)):
+                if i['name'] == topGameNames[topGame]:
+                    duplicateGame = True
+            if not duplicateGame:
+                topGameIds.append(i['id'])
+                topGameNames.append(i['name'])
         getMoreGameViewers()
         pagination = ""
     if topGameViewers < 100:
@@ -390,6 +399,9 @@ def printData():
     #     print(len(topGameIdsLooped), topGameIdsLooped)
     testExist = 0
     testNonExist = 0
+    if testing:
+        print("The top game names are: ")
+        print(topGameNames)
     for i in range(len(topGameNames)):
         existingGame = False
         for h in range(len(hostGamesLooped)):
@@ -465,7 +477,9 @@ def printData():
 
 
 def printStrings():
+    global firstRun
     global worthGames
+    global latestGameFileName
     global gameViewersLooped
     global gameStreamsLooped
     global gameViewerRatioLooped
@@ -486,6 +500,59 @@ def printStrings():
     global totalViewerRatio
     global totalViewersMedian
     global totalViewerRatioMedianRatio
+    timeOfDay = str
+    if datetime.datetime.today().weekday() == 5:
+        latestGameFileName = "Saturday_latestGames.csv"
+    elif datetime.datetime.today().weekday() == 6:
+        latestGameFileName = "Sunday_latestGames.csv"
+    else:
+        if 0 <= int(datetime.datetime.now().strftime("%H")) < 2:
+            timeOfDay = "1600-0200"
+        elif 2 <= int(datetime.datetime.now().strftime("%H")) < 7:
+            timeOfDay = "0200-0700"
+        elif 7 <= int(datetime.datetime.now().strftime("%H")) < 12:
+            timeOfDay = "0700-1200"
+        elif 12 <= int(datetime.datetime.now().strftime("%H")) < 16:
+            timeOfDay = "1200-1600"
+        elif 16 <= int(datetime.datetime.now().strftime("%H")):
+            timeOfDay = "1600-0200"
+        latestGameFileName = timeOfDay + "_latestGames.csv"
+    if not firstRun:
+        if not os.path.isfile(latestGameFileName):
+            outputLatestGameLines = ["Game, Median, Average, " + str(int(time.time())) + "\n"]
+        else:
+            # Read file if existing or make new one
+            readLatestGamesFile = open(latestGameFileName, "r", encoding='utf-8')
+            outputLatestGameLines = readLatestGamesFile.readlines()
+            readLatestGamesFile.close()
+            for savedGameLine in range(len(outputLatestGameLines)):
+                if savedGameLine == 0:
+                    outputLatestGameLines[0] = outputLatestGameLines[0][:-1] + ", " + str(int(time.time())) + "\n"
+                    gameLineTimestamps = outputLatestGameLines[0][:-1].split(",")
+                    for timestamp in range(len(gameLineTimestamps)):
+                        # if data older than 5 days scrap data
+                        if timestamp > 2:
+                            if datetime.datetime.today().weekday() == 5 or datetime.datetime.today().weekday() == 6:
+                                if (int(time.time()) - int(gameLineTimestamps[timestamp])) > 777600000:
+                                    for oldDataLine in range(len(outputLatestGameLines)):
+                                        gamelineVmRats = outputLatestGameLines[oldDataLine][:-2].split(",")
+                                        gamelineVmRats.pop(timestamp)
+                                        outputLatestGameLines[oldDataLine] = ",".join(gamelineVmRats) + "\n"
+                            else:
+                                if (int(time.time()) - int(gameLineTimestamps[timestamp])) > 432000:
+                                    for oldDataLine in range(len(outputLatestGameLines)):
+                                        gamelineVmRats = outputLatestGameLines[oldDataLine][:-2].split(",")
+                                        gamelineVmRats.pop(timestamp)
+                                        outputLatestGameLines[oldDataLine] = ",".join(gamelineVmRats) + "\n"
+            outputLatestGameLinesTemp = [outputLatestGameLines[0]]
+            for savedGameLine in range(len(outputLatestGameLines)):
+                if savedGameLine > 0:
+                    outputLatestGameLines[savedGameLine] = outputLatestGameLines[savedGameLine][:-1] + ", 0\n"
+                    if testing:
+                        print(outputLatestGameLines[savedGameLine])
+                    if not outputLatestGameLines[savedGameLine].split(",")[2] == ' 0':
+                        outputLatestGameLinesTemp.append(outputLatestGameLines[savedGameLine])
+            outputLatestGameLines = outputLatestGameLinesTemp
     viewAmount = len(hostGamesLooped)
     for i in range(len(combinedTags)):
         lengthTags = []
@@ -495,6 +562,9 @@ def printStrings():
                     lengthTags.append(combinedTags[i][1][v][1][r])
         if lengthTags:
             print("New tags with " + combinedTags[i][0] + " are: " + ', '.join(str(x) for x in lengthTags))
+    if testing:
+        print("The host game looped printed are: ")
+        print(hostGamesLoopedPrinted)
     for i in range(viewAmount):
         if viewerRatioMedianRatioLoopedSorted[i - viewAmount] > 0:
             gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
@@ -579,6 +649,60 @@ def printStrings():
                     print(printString)
                     if newGameLooped:
                         newGames.append(hostGamesLoopedPrinted[i - viewAmount])
+                ## Save game values of the last two weeks
+                if not firstRun:
+                    commaAmount = outputLatestGameLines[0].count(",")
+                    # Add games to lines
+                    for gameLine in range(len(outputLatestGameLines)):
+                        existingLatestGame = False
+                        if hostGamesLoopedPrinted[i - viewAmount] == outputLatestGameLines[gameLine].split(",")[0]:
+                            existingLatestGame = True
+                            # replace 0 with value if the game is popular
+                            outputLatestGameLines[gameLine] = outputLatestGameLines[gameLine][0:-4] + ", " + str(round(viewerRatioMedianRatioLoopedAverage)) + "\n"
+                            if testing:
+                                print(outputLatestGameLines[gameLine])
+                            break
+                    if not existingLatestGame:
+                        # Add 0s and the value if there is a new popular game
+                        outputLatestGameLines.append(hostGamesLoopedPrinted[i - viewAmount] + (commaAmount - 1) * ", 0" + ", " + str(round(viewerRatioMedianRatioLoopedAverage)) + "\n")
+    # Add in the median of all viewer median ratios
+    if not firstRun:
+        mVmRats = []
+        avgVmRats = []
+        for gameLine in range(len(outputLatestGameLines)):
+            if gameLine > 0:
+                if testing:
+                    print(outputLatestGameLines[gameLine])
+                gameVmRats = outputLatestGameLines[gameLine].split(",")[3:]
+                for VmRatStored in range(len(gameVmRats)):
+                    gameVmRats[VmRatStored] = int(gameVmRats[VmRatStored])
+                mVmRatStored = statistics.median(gameVmRats)
+                mVmRats.append(mVmRatStored)
+                avgGameVmRatStored = round(sum(gameVmRats) / len(gameVmRats))
+                avgVmRats.append(mVmRatStored)
+                outputLatestGameLines[gameLine] = outputLatestGameLines[gameLine].split(",")[0] + ", " + str(mVmRatStored) + ", " + str(avgGameVmRatStored) + "," + ','.join(outputLatestGameLines[gameLine].split(",")[3:])
+
+        # Sort lines by average
+        outputGamesHeader = outputLatestGameLines[0]
+        outputLatestGameLines.pop(0)
+        outputLatestGameLinesSorted = outputLatestGameLines[:]
+        mVmRats[:], outputLatestGameLinesSorted[:] = (list(x) for x in zip(*sorted(zip(mVmRats, outputLatestGameLinesSorted), key=lambda pair: pair[0])))
+        outputLatestGameLinesReversed = outputLatestGameLinesSorted[:]
+        outputLatestGameLinesReversed.reverse()
+        latestGameLineTemp = []
+        latestGameLineTemp.append(outputGamesHeader)
+        for latestGameLine in range(len(outputLatestGameLinesReversed)):
+            latestGameLineTemp.append(outputLatestGameLinesReversed[latestGameLine])
+        outputLatestGameLines = latestGameLineTemp
+
+    # Write back to file
+    if not firstRun:
+        latestGamesFile = open("tmpfile.csv", "w", encoding='utf-8')
+        for latestGameLine in range(len(outputLatestGameLines)):
+            latestGamesFile.writelines(outputLatestGameLines[latestGameLine])
+        latestGamesFile.close()
+        os.replace('tmpfile.csv', latestGameFileName)
+
     print("Favorite games:")
     for i in range(viewAmount):
         gameViewersLoopedAverage = int(gameViewersLoopedPrinted[i - viewAmount]) / loops
@@ -802,6 +926,7 @@ while True:
         getMoreGames()
         if testing:
             print("Streamed games have been gotten")
+            print(topGameNames)
 
         # Extract id from blacklist
         blacklistIds = []
@@ -867,7 +992,6 @@ while True:
             ]
 
         # Add games that were not included
-        existingGame = False
         if loops > 0:
             # if testing:
             #     print("The new top game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
@@ -875,6 +999,7 @@ while True:
             #     print("The new top game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
             #     print("The old top game ids are: " + str(len(topGameIdsLooped)) + " " + str(topGameIdsLooped))
             for i in range(len(topGameIdsLooped)):
+                existingGame = False
                 for t in range(len(topGameIds)):
                     if topGameIdsLooped[i] == topGameIds[t]:
                         existingGame = True
@@ -882,9 +1007,9 @@ while True:
                     topGameIds.append(topGameIdsLooped[i])
                     topGameNames.append(hostGamesLooped[i])
 
-        # if testing:
-        #     print("The added game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
-        #     print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
+        if testing:
+            print("The added game ids are: " + str(len(topGameIds)) + " " + str(topGameIds))
+            print("The added game names are: " + str(len(topGameNames)) + " " + str(topGameNames))
         try:
             for i in range(len(topGameIds)):
                 url = "https://api.twitch.tv/helix/streams?first=100&language=en&language=other&game_id=" + topGameIds[i]
@@ -1018,12 +1143,13 @@ while True:
                 if firstRun:
                     if (i + 1) == len(topGameIds):
                         print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
-                    elif i <= 5:
-                        print(str(i) + " of " + str(len(topGameIds)))
-                    elif 10 <= i < 50:
-                        if i % 10 == 0:
-                            print(str(i) + " of " + str(len(topGameIds)))
-                    elif i % 50 == 0:
+                    elif i <= 4:
+                        print(str(i+1) + " of " + str(len(topGameIds)) + ' - ' + topGameNames[i])
+                    elif i == 9:
+                        print(str(i+1) + " of " + str(len(topGameIds)) + ' - ' + ', '.join([topGameNames[5], topGameNames[6], topGameNames[7], topGameNames[8], topGameNames[9]]))
+                    elif i == 19 or i == 29 or i == 39 or i == 49:
+                        print(str(i+1) + " of " + str(len(topGameIds)) + ' - ' + ', '.join([topGameNames[i-9], topGameNames[i-8], topGameNames[i-7], topGameNames[i-6], topGameNames[i-5], topGameNames[i-4], topGameNames[i-3], topGameNames[i-2], topGameNames[i-1], topGameNames[i]]))
+                    elif i % 50 == 0 and not i == 50:
                         print(str(i) + " of " + str(len(topGameIds)))
                 else:
                     if len(topGameIds) < 200:
@@ -1313,9 +1439,9 @@ while True:
                 newGamesReversed.reverse()
                 newGamesPrintList = []
                 if len(newGamesReversed) == 1:
-                    print("The newest game is: " + newGamesReversed[0])
+                    print("The newest, streamable game is: " + newGamesReversed[0])
                 else:
-                    print("The new games are:")
+                    print("The new, streamable games are:")
                     for i, a in enumerate(newGamesReversed):
                         newGamesPrintList.append(a)
                         if i % 10 == 9:
@@ -1328,9 +1454,9 @@ while True:
         if firstRun:
             printStrings()
     elif restartLoops:
+        firstRun = False
         printData()
         printStrings()
-        firstRun = False
         loops = 0
     now = datetime.datetime.now()
     hours, minutes, seconds = convert_timedelta(now - loopStart)
