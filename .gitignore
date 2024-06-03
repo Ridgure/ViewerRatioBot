@@ -12,8 +12,12 @@ UnwantedTwitch_Blacklist.json
 tags.py
 latestGames.csv
 0200-0700_latestGames.csv
+0200-0200_Saturday_latestGames.csv
+0200-1700_Sunday_latestGames.csv
+1700-0000_Sunday_latestGames.csv
 0700-1200_latestGames.csv
 1200-1600_latestGames.csv
 1600-0200_latestGames.csv
 Saturday_latestGames.csv
 Sunday_latestGames.csv
+mypy.ini

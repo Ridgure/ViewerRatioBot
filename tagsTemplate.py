@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # tags.py
 
-whitelistedTags = [
+whitelistedTagsTemplate = [
     ['tag1', 'tagid1'], ['tag2', 'tagid2']
 ]
 
-blacklistedTags = [
+blacklistedTagsTemplate = [
     ['tag1', 'tagid1'], ['tag2', 'tagid2']
 ]

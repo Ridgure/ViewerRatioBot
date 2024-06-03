@@ -10,10 +10,12 @@
 
 favoriteGames = [
     ['Category 1', [
-        ['game1', 'game2', 'game3', 'game4']
+        ['game1', 'gameid1'], ['game2', 'gameid2'], ['game3', 'gameid3'], ['game3', 'gameid3']
     ]],
     ['Category 2', [
-        ['game5', 'game6', 'game7', 'game8']
+        ['Subcategory 1', [
+            ['game5', 'gameid5'], ['game6', 'gameid6'], ['game7', 'gameid7'], ['game8', 'gameid8']
+        ]]
     ]]
 ]
 
@@ -22,10 +24,12 @@ favoriteGames = [
 
 wishlisted = [
     ['Category 1', [
-        ['game1', 'game2', 'game3', 'game4']
+        ['game1', 'gameid1'], ['game2', 'gameid2'], ['game3', 'gameid3'], ['game3', 'gameid3']
     ]],
     ['Category 2', [
-        ['game5', 'game6', 'game7', 'game8']
+        ['Subcategory 1', [
+            ['game5', 'gameid5'], ['game6', 'gameid6'], ['game7', 'gameid7'], ['game8', 'gameid8']
+        ]]
     ]]
 ]
 
@@ -36,10 +40,12 @@ wishlisted = [
 
 blacklist = [
     ['Category 1', [
-        ['game1', 'id1'], ['game2', 'id2']
+        ['game1', 'gameid1'], ['game2', 'gameid2'], ['game3', 'gameid3'], ['game3', 'gameid3']
     ]],
     ['Category 2', [
-        ['game3', 'id3'], ['game4', 'id4']
+        ['Subcategory 1', [
+            ['game5', 'gameid5'], ['game6', 'gameid6'], ['game7', 'gameid7'], ['game8', 'gameid8']
+        ]]
     ]]
 ]
 
