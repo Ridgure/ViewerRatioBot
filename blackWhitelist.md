@@ -23,12 +23,33 @@
  **Categories:**
 Survival, Puzzle, _Small levels_ - Merge, Management, Tile games, Roguelite - Interacts with environment, Strategy - balance defence, Weird, Educational, Board games, Special, Sports - Single player, Simulation, Community games, Defence games, Platformer - Skill jumps, RPG, Mobile, Linear Story, Idle games
 
+
+|**Survival**|_General, 2D, Ocean, Space, Zombies_|
+|----------------|-----------------------------------------------------------------------|
+|**General**|Ark: Survival Evolved, Subsistence, Salt 2: Shores of Gold, Creativerse, Icarus, Atlas, Ark, Minecraft, Vintage Story, Valheim, Grand Emprise: Time Travel Survival|
+|**2D**|Dwarf Fortress, Forager, Terraria|
+|**Ocean**|Raft, Subnautica|
+|**Space**|Astroneer, Starbound, Planet Crafter|
+|**Zombies**|Project Zomboid|
+
 |   |**Favorite games**|
 |---|---------------------|
-|**Survival**|General, 2D, Ocean, Space, Zombies|
 |**Puzzle**|Portal 2, A Little To The Left|
 |**_Small levels_ - Merge**|Tetris 99|
-|**Management**|General, Automation, Traffic, _Caretaker_ - farm etc. - Villagers, Simulation, _Colony survival_, City building|
+
+
+|**Management**|_General, Automation, Traffic, _Caretaker_ - farm etc. - Villagers, Simulation, _Colony survival_, City building_|
+|----------------|-----------------------------------------------------------------------|
+|**General**|RollerCoaster Tycoon 2, Timberborn, RimWorld, Naheulbeuk's Dungeon Master|
+|**Automation**|Factorio, Hydroneer, Space Engineers, Mindustry, Satisfactory, Infinifactory, Shapez|
+|**Traffic**|Snowrunner, Mini Motorways, Expeditions: A MudRunner Game|
+|**_Caretaker_ - farm etc. - Villagers**|Moonstone Island, Spirittea, Animal Crossing: New Horizons, Kynseed, Dinkum, Sun Haven, ASKA, Stardew Valley, Roots of Pacha, Secrets of Grindea, A Game About Digging A Hole, Fields of Mistria, Potions: A Curious Tale, Palia|
+|**Simulation**|The Sims 4, The Sims 3, The Sims 2, Oxygen Not Included, Game Dev Tycoon|
+|**_Colony survival_**|Farthest Frontier|
+|**City building**|Cities: Skylines, SimCity, Cities: Skylines II|
+
+|   |**Favorite games**|
+|---|---------------------|
 |**Tile games**|Dorfromantik, Unrailed!, Pan'orama, Dawnfolk|
 |**Roguelite - Interacts with environment**|Noita|
 |**Strategy - balance defence**|Going medieval, They Are Billions, The Riftbreaker, Halls of Torment|
@@ -37,11 +58,31 @@ Survival, Puzzle, _Small levels_ - Merge, Management, Tile games, Roguelite - In
 |**Board games**|Tabletop Simulator, Card Games, Board Games, Tales & Tactics|
 |**Special**|Art, Makers & Crafting, Software and Game Development, Science & Technology, Roblox Studio|
 |**Sports - Single player**|Golf With Your Friends, Tony Hawk's Pro Skater 1+2, Skater XL, Skate 3, Cursed to Golf, Golf Gang|
-|**Simulation**|Consume objects, Vehicles, Animals|
+
+
+|**Simulation**|_Consume objects, Vehicles, Animals_|
+|----------------|-----------------------------------------------------------------------|
+|**Consume objects**|Viscera Cleanup Detail: Santa's Rampage, Viscera Cleanup Detail, PowerWash Simulator, Loddlenaut, Murky Divers, Crime Scene Cleaner|
+|**Vehicles**|American Truck Simulator, Euro Truck Simulator 2, Star Trucker|
+|**Animals**|The Isle, Animalia Survival|
+
+|   |**Favorite games**|
+|---|---------------------|
 |**Community games**|Stream Pirates, Cult of the Lamb, Twitch Recap, Marbles On Stream, Stream Raiders, Stream Racer, Bobble League, Algos United: Live!|
 |**Defence games**|Soulstone Survivors|
 |**Platformer - Skill jumps**|Jump King, Pac-Man World Re-Pac, Rogue Legacy 2, Getting Over It with Bennett Foddy, Pseudoregalia, Ultros|
-|**RPG**|General, The numbers they go up, 2D, JP/KR - JRPG, Historical|
+
+
+|**RPG**|_General, The numbers they go up, 2D, JP/KR - JRPG, Historical_|
+|----------------|-----------------------------------------------------------------------|
+|**General**|Gothic, Gothic II, TERA, The Elder Scrolls Online, Frozen Flame, Banishers: Ghosts of New Eden, Trove, Grim Dawn, Neverwinter, Corepunk, Dungeons & Dragons Online, New World, Guild Wars 2|
+|**The numbers they go up**|Old School RuneScape, Tibia, RuneScape, Habbo, Elin, Brighter Shores|
+|**2D**|Core Keeper|
+|**JP/KR - JRPG**|Aion, Lost Ark, Final Fantasy XIV Online, Infinity Nikki, Palworld, PAL, Genshin Impact, Metin2, Black Desert, Aion Classic, Duet Night Abyss|
+|**Historical**|Assassin's Creed III, Asterigos: Curse of the Stars, Assassin's Creed Mirage, Assassin's Creed, Assassin's Creed Syndicate, Assassin's Creed Revelations, Assassin's Creed III Remastered, Assassin's Creed Brotherhood, Assassin's Creed Origins, Assassin's Creed IV Black Flag, Assassin's Creed Valhalla, Assassin's Creed Unity, Assassin's Creed II, Assassin's Creed Odyssey|
+
+|   |**Favorite games**|
+|---|---------------------|
 |**Mobile**|Puzzle & Dragons|
 |**Linear Story**|A Plague Tale: Innocence|
 |**Idle games**|Idle Champions of the Forgotten Realms, Cookie Clicker, Idle skilling|
@@ -90,7 +131,7 @@ Survival, Vehicles - Automotive - Fix up a vehicle and drive to destinations, Pu
 |**RPG**|__Multi player_ - Story - Item quality - MMORPG, _Single player_ - Story - Item quality, _Single player_ - Story - Item quality - Dragon age, _Single player_ - Story - Item quality - Baldur's Gate, _Comic universes_, _Japanese_ - Story - Item quality - JMMORPG, _Japanese_ - JRPG -  Good, _Japanese_ - JRPG -  Good - Tales of ..., _Japanese_ - JRPG -  Good - Party that fights for you not turn based, _Japanese_ - JRPG - Good - Square Enix, _Japanese_ - Good - Final Fantasy, _Japanese_ - JRPG - Average - Dialogue - No interesting combat - Can have good artwork, Korean, Chinese, _The Elder Scrolls_, _Lowpoly_ - Cartoonish, _2D_, _Furry_, _Consume objects_ - Collect-a-thon_|
 |---|---------------------|
 |**_Multi player_ - Story - Item quality - MMORPG**|Gloria Victis, Ultima Online, Knight Online, Ravenfall, CABAL Online, Wizard101, Albion Online, Tarisland, R2 Online: Reign of Revolution, Silkroad Online, Fable Anniversary, Flyff Universe, Vindictus, Dauntless, Starfield, Path of Titans, EverQuest, ROSE Online, Wobbly Life, Neverwinter Nights: Enhanced Edition, Knight Online, Perfect World, Fable II, Outward, Embers Adrift, Pantheon: Rise of the Fallen, Last Oasis, Perfect New World, Anvil Empires, RetroMMO, Mad World: Age of Darkness, RF Online, Ashes of Creation, Eden Eternal, Mabinogi, With Your Destiny, City of Heroes: Homecoming, Wayfinder, Divinity: Original Sin II, Dark Age of Camelot, EverQuest II, Throne and Liberty, Monsters & Memories, Space Station 13, Uncharted Waters Origin, V Rising, Guild Wars, Fractured Online, EverCraft Online, Fable III, The Quinfall, Anarchy Online, City of Heroes, Bless Unleashed, Medivia Online, Big Time, Chimeraland, VELEV|
-|**_Single player_ - Story - Item quality**|Ethyrial: Echoes of Yore, Horizon Forbidden West, Blacktail, Chibi-Robo!, Winter Survival, Horizon Call of the Mountain, Deliver Us Mars, Kingdom Come: Deliverance, I Am Jesus Christ, Dread Delusion, Sports Story, Turnip Boy Commits Tax Evasion, Pathfinder: Wrath of the Righteous, Dragon's Dogma, Lunacid, Solasta: Crown of the Magister, Horizon Zero Dawn, RAIDBORN, Kingdoms of Amalur: Re-Reckoning, Medieval Dynasty, Kenshi, Pathfinder: Kingmaker, Cyberpunk 2077, Immortals Fenyx Rising, Shadow of the Colossus, Sir Whoopass, Dragon's Dogma II, Robin Hood: Sherwood Builders, Biomutant, Disco Elysium, Turnip Boy Robs a Bank, Eternal Strands, Avowed, Tainted Grail: The Fall of Avalon, Horizon Zero Dawn Remastered, Pillars of Eternity II: Deadfire, Dragon's Dogma: Dark Arisen, LEGO Horizon Adventures, In Stars and Time, Dwarven Realms|
+|**_Single player_ - Story - Item quality**|Ethyrial: Echoes of Yore, Horizon Forbidden West, Blacktail, Chibi-Robo!, Winter Survival, Horizon Call of the Mountain, Deliver Us Mars, Kingdom Come: Deliverance, I Am Jesus Christ, Dread Delusion, Sports Story, Turnip Boy Commits Tax Evasion, Pathfinder: Wrath of the Righteous, Dragon's Dogma, Lunacid, Solasta: Crown of the Magister, Horizon Zero Dawn, RAIDBORN, Kingdoms of Amalur: Re-Reckoning, Medieval Dynasty, Kenshi, Pathfinder: Kingmaker, Cyberpunk 2077, Immortals Fenyx Rising, Shadow of the Colossus, Sir Whoopass, Dragon's Dogma II, Robin Hood: Sherwood Builders, Biomutant, Disco Elysium, Turnip Boy Robs a Bank, Eternal Strands, Avowed, Tainted Grail: The Fall of Avalon, Horizon Zero Dawn Remastered, Pillars of Eternity II: Deadfire, Dragon's Dogma: Dark Arisen, LEGO Horizon Adventures, In Stars and Time, Dwarven Realms, Game of Thrones: Kingsroad|
 |**_Single player_ - Story - Item quality - Dragon age**|Dragon Age II, Dragon Age: Inquisition, Dragon Age: Origins, Dragon Age: The Veilguard|
 |**_Single player_ - Story - Item quality - Baldur's Gate**|Baldur's Gate 3, Baldur's Gate: Enhanced Edition, Baldur's Gate, Baldur's Gate II: Enhanced Edition, Baldur's Gate: Dark Alliance II|
 |**_Comic universes_**|Looney Tunes: Back in Action, SpongeBob SquarePants: Battle For Bikini Bottom, SpongeBob SquarePants: The Cosmic Shake, The Witcher: Enhanced Edition, The Witcher 3: Wild Hunt, The Witcher 2: Assassins of Kings, The Witcher, Snufkin: Melody of Moominvalley|
@@ -154,7 +195,7 @@ Survival, Vehicles - Automotive - Fix up a vehicle and drive to destinations, Pu
 |**Management**|__General_, _Caretaker_ - Institution manager, _Caretaker_ - farm etc. - Villagers, _Colony survival_, _Colony survival_ - God simulator, _Theme park_ - Animals/prison/hospital/cult/camp, _City builder__|
 |---|---------------------|
 |**_General_**|Barotrauma, Stormworks: Build and Rescue, Kingdom Eighties, Kingdom Two Crowns, Travellers Rest, Lobotomy Corporation, Hundred Days, Choo-Choo Charles, Railgrade, Going Medieval, Teardown, Exogate Initiative, Frostpunk, Wobbledogs, Hardspace: Shipbreaker, Frostpunk 2, Mind Over Magic, Stellaris, City of Gangsters, Unpacking|
-|**_Caretaker_ - Institution manager**|Supermarket Simulator, Mad Games Tycoon 2, War Hospital, Blooming Business: Casino, Two Point Hospital, Galacticare, Captain of industry, Supermarket Together|
+|**_Caretaker_ - Institution manager**|Supermarket Simulator, Mad Games Tycoon 2, War Hospital, Blooming Business: Casino, Two Point Hospital, Galacticare, Captain of industry, Supermarket Together, Two Point Museum|
 |**_Caretaker_ - farm etc. - Villagers**|Hello Kitty Island Adventure, Havendock, Farm Together 2, Story of Seasons: A Wonderful Life, Ooblets, Harvestella, Farming Simulator 22, Farming Simulator 19, Garden Life, Botany Manor, Echoes of the Plum Grove, Chill Town, Wylde Flowers, Hokko Life, The Witch of Fern Island, Slime Rancher 2, Graveyard Keeper, No Place Like Home, Sengoku Dynasty, Fae Farm, Lightyear Frontier, SunnySide, Farming Simulator 25, Lakeburg Legacies, Coral Island, Slime Rancher, Ranch Simulator, Story of Seasons: Pioneers of Olive Town, Paleo Pines, Story of Seasons: Friends of Mineral Town, Luma Island, Everdream Valley|
 |**_Colony survival_**|The Settlers: New Allies, The Wandering Village, Stacklands, Industries of Titan, Pharaoh: A New Era, The Eternal Cylinder, dotAGE, Norland, Bellwright, Sapiens, Against the Storm, Surviving the Aftermath, This War of Mine, SteamWorld Build, Potion Tycoon, Zombie Cure Lab, Land of the Vikings, Anno 1800, Pioneers of Pagonia, Floodland, Slipstream: Rogue Space, News Tower, The Tribe Must Survive, New Cycle, Surviving Mars, Fabledom, Stranded: Alien Dawn, Farlanders, Aquatico, Surviving the Abyss, Catizens, Northgard, Stardeus, Foundation|
 |**_Colony survival_ - God simulator**|WorldBox: God Simulator, Spore, The Universim|
@@ -213,7 +254,7 @@ Survival, Vehicles - Automotive - Fix up a vehicle and drive to destinations, Pu
 |**Roguelite - _Interact with environment_ - Upgradable static place to return to**|Tower Princess, Moonlighter, Ravenbound, Hades II, Don't Starve Together, Nuclear Throne, Minecraft Dungeons, Tribes of Midgard, Ember Knights, Death's Door, Don't Starve, Super Auto Battlemon, Wall World, Wizard with a Gun, Hades|
 |**Idle games**|Dragonheir: Silent Gods, Sixty Four, Rusty's Retirement, AdVenture Capitalist, Cell to Singularity, Shakes and Fidget|
 
-<a href="#white-black-list">Back to top</a>
+<a href="#whitelist">Back to top</a>
 ## Blacklist:
 
  **Categories:**
@@ -439,7 +480,7 @@ Shooter, Bossfights, Melee fighting, Drama, Asymmetrical - Social deduction - Hi
 |**Speedrun**|__General_ - Metroidvania, _Collect-a-thon_ - Metroidvania, _MS-DOS_ - Metroidvania, _Sega Genesis_ - Metroidvania, _Sega Saturn - Metroidvania, _NES - SNES_ - Metroidvania, _Nintendo 64_ - Metroidvania, _Nintendo Switch_ - Metroidvania, _Game Boy_ - Metroidvania, _Game Boy Color_ - Metroidvania, _Game Boy Advance_ - Metroidvania, _Game Boy Advance_ - Metroidvania - Mega Man Battle Network, _PS1_ - Playstation 1 - Metroidvania, _PS2_ - Playstation 2 - Metroidvania, _PS2_ - Playstation 2 - Shooter, _PS2_ - Playstation 2 - RPG, _PS2_ - Playstation 2 - RTS, _PS3_ - Playstation 3 - Metroidvania, _PS4_ - Playstation 4 - Metroidvania, _Gamecube_ - Metroidvania, _Timed_ - Stressful - Chased - Finish level before the thing gets you, _Spyro_, _Zelda_, _Mario_, _Sonic_ - Collect-a-thon, _Mega Man__|
 |---|---------------------|
 |**_General_ - Metroidvania**|Metroid Dread, Flintlock: The Siege of Dawn, Super Mario, The Last Faith, Kirby and the Forgotten Land, Super Meat Boy, Sheepy: A Short Adventure, Freedom Planet 2, Amok Runner, Moonscars, Psychonauts 2, Hot Lava, Control, Crash Bandicoot 4: It's About Time, The Grinch, The Messenger, Ratchet %26 Clank: Rift Apart, SpeedRunners, Ghost Song, Dragon Quest III: HD-2D Remake|
-|**_Collect-a-thon_ - Metroidvania**|Penny's Big Breakaway, Escape From Lavender Island, Antonblast|
+|**_Collect-a-thon_ - Metroidvania**|Penny's Big Breakaway, Escape From Lavender Island, Antonblast, HASTE|
 |**_MS-DOS_ - Metroidvania**|System Shock, Warcraft II: Tides of Darkness, Star Wars: Dark Forces, The Elder Scrolls Adventures: Redguard, Star Wars: Dark Forces Remaster, Spear of Destiny Mission 3: Ultimate Challenge, Faith: The Unholy Trinity|
 |**_Sega Genesis_ - Metroidvania**|ToeJam %26 Earl|
 |**_Sega Saturn - Metroidvania**|Shining Force III: 2nd Scenario|
@@ -579,4 +620,4 @@ Shooter, Bossfights, Melee fighting, Drama, Asymmetrical - Social deduction - Hi
 |**_Other_**|SOUND VOLTEX EXCEED GEAR|
 
 
-<a href="#white-black-list">Back to top</a>
+<a href="#blacklist">Back to top</a>

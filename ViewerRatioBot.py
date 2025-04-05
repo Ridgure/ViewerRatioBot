@@ -163,7 +163,7 @@ f.writelines("\n" + ', '.join(favoriteCategories))
 f.writelines('\n')
 singularCategories = False
 for favorite_category in range(len(FAVORITE_GAMES)):
-    if isinstance(list_item(FAVORITE_GAMES, 1, 1), str):
+    if isinstance(nested_list(FAVORITE_GAMES, favorite_category, 0), str):
         if not singularCategories:
             f.writelines('\n|   |**Favorite games**|')
             f.writelines('\n|---|---------------------|')
@@ -226,7 +226,7 @@ for wishlist_category in range(len(WISHLISTED)):
             f.writelines('\n|**' + list_item(WISHLISTED, wishlist_category, favorite_game) + '**|' + ', '.join(categoryGames) + '|')
         f.writelines('\n')
 f.writelines('\n')
-f.writelines('\n<a href="#white-black-list">Back to top</a>')
+f.writelines('\n<a href="#whitelist">Back to top</a>')
 f.writelines('\n## Blacklist:')
 f.writelines('\n')
 f.writelines('\n **Categories:**')
@@ -262,7 +262,7 @@ for blacklist_category in range(len(BLACKLIST)):
             f.writelines('\n|**' + list_item(BLACKLIST, blacklist_category, favorite_game) + '**|' + ', '.join(blacklistedGames) + '|')
         f.writelines('\n')
 f.writelines('\n')
-f.writelines('\n<a href="#white-black-list">Back to top</a>')
+f.writelines('\n<a href="#blacklist">Back to top</a>')
 f.close()
 os.replace('tmpfile.py', 'blackWhitelist.md')
 print('Black/whitelist has been updated')
