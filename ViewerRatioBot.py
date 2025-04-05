@@ -124,10 +124,10 @@ def print_every_ten(list_of_strings: list[str]) -> None:
     for print_games_index in range(len(list_of_strings)):
         new_games_print_list.append(list_of_strings[print_games_index])
         if print_games_index % 10 == 9:
-            print((i - 8), "-", (i + 1), ", ".join(new_games_print_list))
+            print((print_games_index - 8), "-", (print_games_index + 1), ", ".join(new_games_print_list))
             new_games_print_list = []
-        if not (len(newGamesReversed) % 10) == 0:
-            print((len(newGamesReversed) - (len(newGamesReversed) % 10) + 1), "-", len(newGamesReversed), ", ".join(new_games_print_list))
+    if not (len(new_games_print_list) % 10) == 0:
+        print((len(list_of_strings) - (len(list_of_strings) % 10) + 1), "-", len(list_of_strings), ", ".join(new_games_print_list))
 
 
 # Update blacklist readme file
@@ -662,11 +662,16 @@ def print_strings() -> None:
                 time_of_day = "1600-0200"
     print("The time of day is ", time_of_day)
     latestGameFileName = f"{time_of_day}_latestGames.csv"
+    recentGameFileName = "recent.csv"
     if not firstRun:
+        # Read recent file if existing or make new one
+        if not os.path.isfile(recentGameFileName):
+            createRecentGamesFile = open(recentGameFileName, "x", encoding='utf-8')
+            createRecentGamesFile.close()
         if not os.path.isfile(latestGameFileName):
             outputLatestGameLines = ["Game, Median, Average, " + str(int(time.time())) + "\n"]
         else:
-            # Read file if existing or make new one
+            # Read latest file if existing or make new one
             readLatestGamesFile = open(latestGameFileName, "r", encoding='utf-8')
             outputLatestGameLines = readLatestGamesFile.readlines()
             readLatestGamesFile.close()
@@ -914,6 +919,11 @@ def print_strings() -> None:
             latestGamesFile.writelines(outputLatestGameLines[latestGameLine])
         latestGamesFile.close()
         os.replace('tmpfile.csv', latestGameFileName)
+        recentGamesFile = open("tmpfile.csv", "w", encoding='utf-8')
+        for recentGameLine in range(len(outputLatestGameLines)):
+            recentGamesFile.writelines(outputLatestGameLines[recentGameLine])
+        recentGamesFile.close()
+        os.replace('tmpfile.csv', recentGameFileName)
 
     print("Favorite games:")
     for i in range(viewAmount):
@@ -1470,7 +1480,7 @@ while True:
                     gameViewersMedian.append(median)
                 if firstRun:
                     if (i + 1) == len(topGameIds):
-                        print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                        print("\r" + str(len(topGameIds)) + " of " + str(len(topGameIds)), flush=True)
                     elif i <= 4:
                         print(str(i + 1) + " of " + str(len(topGameIds)) + ' - ' + topGameNames[i])
                     elif i == 9:
@@ -1482,18 +1492,18 @@ while True:
                              topGameNames[i - 5], topGameNames[i - 4], topGameNames[i - 3], topGameNames[i - 2],
                              topGameNames[i - 1], topGameNames[i]]))
                     elif i % 50 == 0 and not i == 50:
-                        print(str(i) + " of " + str(len(topGameIds)))
+                        print("\r" + str(i) + " of " + str(len(topGameIds)), end="", flush=True)
                 else:
                     if len(topGameIds) < 200:
                         if (i + 1) == len(topGameIds):
-                            print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                            print("\r" + str(len(topGameIds)) + " of " + str(len(topGameIds)), flush=True)
                         elif i % 50 == 0:
-                            print(str(i) + " of " + str(len(topGameIds)))
+                            print("\r" + str(i) + " of " + str(len(topGameIds)), end="", flush=True)
                     else:
                         if (i + 1) == len(topGameIds):
-                            print(str(len(topGameIds)) + " of " + str(len(topGameIds)))
+                            print("\r" + str(len(topGameIds)) + " of " + str(len(topGameIds)), flush=True)
                         elif i % 100 == 0:
-                            print(str(i) + " of " + str(len(topGameIds)))
+                            print("\r" + str(i) + " of " + str(len(topGameIds)), end="", flush=True)
         except Exception as e:
             print(e)
             if TESTING:
@@ -1648,8 +1658,7 @@ while True:
                         print("New tags with " + list_item(combined_tags, i) + " are: " + ', '.join(str(x) for x in lengthTags))
             for i in range(viewAmount):
                 if viewerRatioMedianRatioSorted[i - viewAmount] > 0:
-                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) > 30 and gameViewersMedian[
-                        i - viewAmount] > 7:
+                    if round(viewerRatioMedianRatioSorted[i - viewAmount]) > 30 and gameViewersMedian[i - viewAmount] > 7:
                         totalGames = totalGames + 1
                         totalViewers = totalViewers + gameViewers[i - viewAmount]
                         totalStreams = totalStreams + gameStreams[i - viewAmount]
@@ -1820,6 +1829,5 @@ while True:
         print_strings()
         loops = 0
     hours, minutes, seconds = convert_timedelta(datetime.now() - loopStart)
-    print('Data from the last {} minute{}, {} second{}'.format(minutes, 's' if seconds != 1 else '', seconds,
-                                                               's' if seconds != 1 else ''))
+    print('Data from the last {} minute{}, {} second{}'.format(minutes, 's' if seconds != 1 else '', seconds, 's' if seconds != 1 else ''))
     print("Current time: " + str(datetime.now().strftime('%H:%M:%S')))
