@@ -189,7 +189,7 @@ for favorite_category in range(len(FAVORITE_GAMES)):
             f.writelines('\n|**' + list_item(FAVORITE_GAMES, favorite_category, category) + '**|' + ', '.join(categoryGames) + '|')
         f.writelines('\n')
 f.writelines('\n')
-f.writelines('\n<a href="#white-black-list">Back to top</a>')
+f.writelines('\n<a href="#favorite-games">Back to top</a>')
 f.writelines('\n## Whitelist:')
 f.writelines('\n')
 f.writelines('\n **Categories:**')
@@ -426,15 +426,14 @@ def get_more_streams(i: int) -> None:
                         for b in range(len(BLACKLISTED_TITLES)):
                             if b == 0:
                                 for t in range(len(BLACKLISTED_TITLES[b][1])):
-                                    if re.search(BLACKLISTED_TITLES[b][1][t].lower(), e['title'].lower()):
+                                    if re.search(BLACKLISTED_TITLES[b][1][t], e['title'], re.IGNORECASE):
                                         blacklisted = True
                                         break
                             elif e['game_name'] == BLACKLISTED_TITLES[b][0]:
                                 for t in range(len(BLACKLISTED_TITLES[b][1])):
-                                    if re.search(BLACKLISTED_TITLES[b][1][t].lower(), e['title'].lower()):
+                                    if re.search(BLACKLISTED_TITLES[b][1][t], e['title'], re.IGNORECASE):
                                         if TESTING and e['game_name'].lower() == TEST_GAME.lower():
-                                            print(e['game_name'] + ' stream has the blacklisted title segmment: "' +
-                                                  BLACKLISTED_TITLES[b][1][t] + '" in the title: ' + e['title'])
+                                            print(f'{e['game_name']} stream has the blacklisted title segmment: "{BLACKLISTED_TITLES[b][1][t]}" in the title: {e['title']}')
                                         blacklisted = True
                                         break
                             if blacklisted:
@@ -443,14 +442,12 @@ def get_more_streams(i: int) -> None:
                             if b == 0:
                                 if nested_list(BLACKLISTED_PARTIAL_STREAMS, b)[0]:
                                     for t in range(len(nested_list(BLACKLISTED_PARTIAL_STREAMS, b, 1))):
-                                        if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ')', e['user_name'].lower()):
+                                        if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ')', e['user_name'], re.IGNORECASE):
                                             blacklisted = True
                                             break
                             elif e['game_name'].lower() == list_item(BLACKLISTED_PARTIAL_STREAMS, b).lower():
                                 for t in range(len(nested_list(BLACKLISTED_PARTIAL_STREAMS, b))):
-                                    if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ').*(' +
-                                                 second_list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ')',
-                                                 e['user_name'].lower()):
+                                    if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, b, t).lower() + ')', e['user_name'], re.IGNORECASE):
                                         blacklisted = True
                                         break
                             if blacklisted:
@@ -1400,7 +1397,7 @@ while True:
                                 for blacklist_category in range(len(BLACKLISTED_TITLES)):
                                     if blacklist_category == 0:
                                         for t in range(len(BLACKLISTED_TITLES[blacklist_category][1])):
-                                            if re.search(BLACKLISTED_TITLES[blacklist_category][1][t].lower(), e['title'].lower()):
+                                            if re.search(BLACKLISTED_TITLES[blacklist_category][1][t], e['title'], re.IGNORECASE):
                                                 if TESTING and e['game_name'].lower() == TEST_GAME.lower():
                                                     print(e[
                                                               'game_name'] + ' stream has the blacklisted title segment: "' +
@@ -1409,7 +1406,7 @@ while True:
                                                 break
                                     elif e['game_name'] == BLACKLISTED_TITLES[blacklist_category][0]:
                                         for t in range(len(BLACKLISTED_TITLES[blacklist_category][1])):
-                                            if re.search(BLACKLISTED_TITLES[blacklist_category][1][t].lower(), e['title'].lower()):
+                                            if re.search(BLACKLISTED_TITLES[blacklist_category][1][t], e['title'], re.IGNORECASE):
                                                 if TESTING and e['game_name'].lower() == TEST_GAME.lower():
                                                     print(e[
                                                               'game_name'] + ' stream has the blacklisted title segment: "' +
@@ -1420,7 +1417,7 @@ while True:
                                     if blacklist_category == 0:
                                         if nested_list(BLACKLISTED_PARTIAL_STREAMS, blacklist_category)[0]:
                                             for t in range(len(nested_list(BLACKLISTED_PARTIAL_STREAMS, blacklist_category))):
-                                                if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ')', e['user_name'].lower()):
+                                                if re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ')', e['user_name'], re.IGNORECASE):
                                                     blacklisted = True
                                                     break
                                     elif e['game_name'].lower() == list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category).lower():
@@ -1432,10 +1429,7 @@ while True:
                                                             print(e['user_name'])
                                                     blacklisted = True
                                                     break
-                                            elif re.search(
-                                                    '(' + list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ').*(' +
-                                                    second_list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ')',
-                                                    e['user_name'].lower()):
+                                            elif re.search('(' + list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ').*(' + second_list_item(BLACKLISTED_PARTIAL_STREAMS, blacklist_category, t).lower() + ')', e['user_name'], re.IGNORECASE):
                                                 if TESTING:
                                                     if topGameNames[i] == 'Tibia':
                                                         print(e['user_name'])
